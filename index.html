@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>App ECEME</title>
+<meta name="theme-color" content="#0d1210">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<style>
+  :root{
+    --bg:#0d1210;
+    --bg-alt:#111712;
+    --panel:#161d19;
+    --panel2:#1c241e;
+    --olive:#3f4a35;
+    --olive-light:#4d5a41;
+    --border:#2a332a;
+    --gold:#c9a227;
+    --gold-light:#e0c15c;
+    --text:#eef1ea;
+    --text-dim:#aab5a4;
+    --danger:#b3382c;
+    --danger-light:#e0574a;
+    --success:#3f7d43;
+    --success-light:#5aa860;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg,#0a0f0c 0%, #10160f 100%);
+    color:var(--text);
+    font-family:"Segoe UI",Roboto,Arial,sans-serif;
+    min-height:100vh;
+    padding-bottom:40px;
+  }
+  h1,h2,h3{margin:0;}
+  button{font-family:inherit;}
+  ::selection{background:var(--gold); color:#1a1a1a;}
+
+  /* ===== Header ===== */
+  .topbar{
+    position:relative;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:18px 100px 10px;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .corner-icon{
+    position:absolute;
+    top:14px;
+    width:64px;
+    height:auto;
+    max-height:80px;
+    object-fit:contain;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
+  }
+  .corner-icon.left{left:14px;}
+  .corner-icon.right{right:14px;}
+
+  .title-box{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px 26px;
+    text-align:center;
+    box-shadow:0 4px 18px rgba(0,0,0,.35);
+    min-width:280px;
+  }
+  .title-box h1{
+    font-size:1.5rem;
+    letter-spacing:.05em;
+    color:var(--gold-light);
+    text-transform:uppercase;
+  }
+  .op-selector{position:relative; margin-top:8px;}
+  .op-current{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+    color:var(--text-dim);
+    font-size:.95rem;
+    padding:4px 10px;
+    border-radius:8px;
+    transition:background .15s;
+  }
+  .op-current:hover{background:var(--panel2);}
+  .op-current .chevron{
+    display:inline-block;
+    transition:transform .2s;
+    color:var(--gold);
+    font-size:.8rem;
+  }
+  .op-selector.open .chevron{transform:rotate(180deg);}
+  .op-dropdown{
+    position:absolute;
+    top:100%;
+    left:50%;
+    transform:translateX(-50%);
+    margin-top:6px;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+    display:none;
+    z-index:50;
+    min-width:200px;
+    box-shadow:0 10px 26px rgba(0,0,0,.5);
+  }
+  .op-selector.open .op-dropdown{display:block;}
+  .op-dropdown button{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:10px 16px;
+    background:none;
+    border:none;
+    color:var(--text);
+    cursor:pointer;
+    font-size:.92rem;
+  }
+  .op-dropdown button:hover{background:var(--olive);}
+  .op-dropdown button.active{color:var(--gold-light); font-weight:600;}
+
+  /* ===== Top action buttons ===== */
+  .top-actions{
+    display:flex;
+    justify-content:center;
+    gap:80px;
+    padding:14px 20px 22px;
+    flex-wrap:wrap;
+  }
+  .top-actions button{
+    background:var(--olive);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 22px;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:600;
+    letter-spacing:.03em;
+    font-size:.9rem;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:background .15s, transform .1s;
+  }
+  .top-actions button:hover{background:var(--olive-light);}
+  .top-actions button:active{transform:scale(.97);}
+  .top-actions button svg{width:16px;height:16px;flex:none;}
+
+  /* ===== Body layout ===== */
+  .app-body{
+    display:flex;
+    max-width:1100px;
+    margin:0 auto;
+    gap:18px;
+    padding:0 16px;
+    align-items:flex-start;
+  }
+  .sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:220px;
+    flex:none;
+  }
+  .tab-btn{
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:16px 16px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    text-align:left;
+    font-size:.98rem;
+    font-weight:600;
+    letter-spacing:.02em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    transition:background .15s,border-color .15s;
+  }
+  .tab-btn svg{width:20px;height:20px;flex:none;color:var(--gold);}
+  .tab-btn:hover{border-color:var(--gold);}
+  .tab-btn.active{background:var(--olive); border-color:var(--gold);}
+
+  .content{
+    flex:1;
+    min-width:0;
+  }
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:760px){
+    .two-col{grid-template-columns:1fr;}
+  }
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  .panel-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:16px;
+  }
+  .panel-card h2{
+    font-size:1.05rem;
+    color:var(--gold-light);
+    margin-bottom:14px;
+    letter-spacing:.02em;
+  }
+
+  /* ===== Funcoes do EM ===== */
+  .row-flex{display:flex; gap:10px; margin-bottom:10px; align-items:center;}
+  .row-flex input[type=text]{
+    flex:1;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:.92rem;
+  }
+  .row-flex input[type=text]:focus{outline:none; border-color:var(--gold);}
+  .icon-btn{
+    background:none;
+    border:1px solid var(--border);
+    color:var(--danger-light);
+    width:36px;height:36px;
+    border-radius:8px;
+    cursor:pointer;
+    flex:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn:hover{border-color:var(--danger-light); background:rgba(179,56,44,.12);}
+  .add-btn{
+    background:none;
+    border:1px dashed var(--gold);
+    color:var(--gold-light);
+    padding:9px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:.88rem;
+    margin-top:4px;
+  }
+  .add-btn:hover{background:rgba(201,162,39,.08);}
+
+  /* ===== Faltas ===== */
+  .date-row{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
+  .date-row label{color:var(--text-dim); font-size:.9rem;}
+  .date-row input[type=date]{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 12px;
+    border-radius:8px;
+    font-size:.92rem;
+    color-scheme:dark;
+  }
+  .presence-row{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .presence-row input[type=text]{
+    flex:1;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:.92rem;
+  }
+  .dot-option{
+    display:flex; align-items:center; gap:6px;
+    cursor:pointer;
+    padding:6px 10px;
+    border-radius:20px;
+    border:1px solid transparent;
+    font-size:.82rem;
+    color:var(--text-dim);
+  }
+  .dot{width:16px;height:16px;border-radius:50%;border:2px solid #555; flex:none;}
+  .dot-option.present .dot{border-color:var(--success-light);}
+  .dot-option.absent .dot{border-color:var(--danger-light);}
+  .dot-option.present.selected{background:rgba(63,125,67,.18); border-color:var(--success-light); color:var(--success-light);}
+  .dot-option.present.selected .dot{background:var(--success-light);}
+  .dot-option.absent.selected{background:rgba(179,56,44,.18); border-color:var(--danger-light); color:var(--danger-light);}
+  .dot-option.absent.selected .dot{background:var(--danger-light);}
+
+  /* ===== PDF lists ===== */
+  .pdf-upload-zone{
+    border:2px dashed var(--border);
+    border-radius:10px;
+    padding:22px;
+    text-align:center;
+    color:var(--text-dim);
+    cursor:pointer;
+    margin-bottom:16px;
+    transition:border-color .15s;
+  }
+  .pdf-upload-zone:hover{border-color:var(--gold);}
+  .pdf-list{display:flex; flex-direction:column; gap:10px;}
+  .pdf-card{
+    display:flex; align-items:center; gap:12px;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+  }
+  .pdf-card .pdf-icon{color:var(--gold); flex:none;}
+  .pdf-card .pdf-info{flex:1; min-width:0;}
+  .pdf-card .pdf-name{font-weight:600; font-size:.9rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .pdf-card .pdf-meta{font-size:.75rem; color:var(--text-dim);}
+  .pdf-card .pdf-actions{display:flex; gap:6px; flex:none;}
+  .pdf-card button, .pdf-card a{
+    background:var(--olive);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:7px 10px;
+    border-radius:7px;
+    font-size:.78rem;
+    cursor:pointer;
+    text-decoration:none;
+  }
+  .pdf-card button:hover, .pdf-card a:hover{background:var(--olive-light);}
+  .pdf-card .remove-btn{color:var(--danger-light); background:none;}
+  .pdf-card .remove-btn:hover{background:rgba(179,56,44,.12);}
+  .empty-hint{color:var(--text-dim); font-size:.85rem; font-style:italic; padding:6px 2px;}
+
+  /* ===== Modals ===== */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.6);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:200;
+    padding:20px;
+    opacity:0;
+    transition:opacity .2s;
+  }
+  .modal-overlay.open{display:flex; opacity:1;}
+  .modal-box{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    max-width:480px;
+    width:100%;
+    padding:22px;
+    transform:scale(.96);
+    transition:transform .2s;
+    max-height:88vh;
+    overflow-y:auto;
+  }
+  .modal-overlay.open .modal-box{transform:scale(1);}
+  .modal-box h3{color:var(--gold-light); margin-bottom:14px; font-size:1.1rem;}
+  .modal-close{
+    position:absolute; top:14px; right:18px;
+    background:none; border:none; color:var(--text-dim);
+    font-size:1.3rem; cursor:pointer;
+  }
+  .modal-box{position:relative;}
+  .modal-box input[type=text], .modal-box input[type=url]{
+    width:100%;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:.92rem;
+    margin-bottom:12px;
+  }
+  .modal-box .primary-btn{
+    background:var(--gold);
+    color:#1a1a1a;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    font-weight:700;
+    cursor:pointer;
+    font-size:.9rem;
+  }
+  .modal-box .primary-btn:hover{background:var(--gold-light);}
+
+  #pdf-viewer-overlay .modal-box{max-width:900px;}
+  #pdf-viewer-pages{
+    max-height:70vh;
+    overflow-y:auto;
+    background:#0a0a0a;
+    border-radius:8px;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  }
+  #pdf-viewer-pages canvas{max-width:100%; box-shadow:0 2px 10px rgba(0,0,0,.5);}
+  #pdf-viewer-title{font-size:.95rem; color:var(--text-dim); margin-bottom:10px; word-break:break-word;}
+
+  .sync-badge{
+    position:fixed; bottom:12px; right:14px;
+    font-size:.72rem;
+    color:var(--text-dim);
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:5px 10px;
+    border-radius:20px;
+    display:flex; align-items:center; gap:6px;
+    z-index:60;
+  }
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#555;}
+  .sync-badge.online .sync-dot{background:var(--success-light);}
+
+  @media (max-width: 760px){
+    .topbar{padding:14px 74px 6px;}
+    .corner-icon{width:44px;}
+    .app-body{flex-direction:column;}
+    .sidebar{flex-direction:row; width:100%; overflow-x:auto; gap:8px; padding-bottom:4px;}
+    .tab-btn{white-space:nowrap; padding:12px 14px;}
+    .top-actions{gap:14px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <img class="corner-icon left" src="assets/eceme-icon.png" alt="Símbolo ECEME">
+  <div class="title-box">
+    <div class="op-selector" id="op-selector">
+      <div class="op-current" id="op-current-btn">
+        <h1 id="op-current-label">Op HEFESTO</h1>
+        <span class="chevron">&#9660;</span>
+      </div>
+      <div class="op-dropdown" id="op-dropdown">
+        <button data-op="hefesto">Op HEFESTO</button>
+        <button data-op="spartacus">Op SPARTACUS</button>
+        <button data-op="azuver">AZUVER</button>
+      </div>
+    </div>
+  </div>
+  <img class="corner-icon right" id="op-badge-icon" src="assets/op-hefesto-icon.png" alt="Símbolo da Operação">
+</header>
+
+<div class="top-actions">
+  <button id="btn-tema">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+    TEMA
+  </button>
+  <button id="btn-kmz">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    KMZ do TEMA
+  </button>
+</div>
+
+<div class="app-body">
+  <nav class="sidebar">
+    <button class="tab-btn active" data-tab="em">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Funções do EM
+    </button>
+    <button class="tab-btn" data-tab="faltas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+      Controle de Faltas
+    </button>
+    <button class="tab-btn" data-tab="tps">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+      TPs
+    </button>
+    <button class="tab-btn" data-tab="manuais">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Principais manuais
+    </button>
+  </nav>
+
+  <main class="content">
+
+    <section id="tab-em" class="tab-panel active">
+      <div class="panel-card">
+        <h2>Funções do EM</h2>
+        <div id="em-rows"></div>
+        <button class="add-btn" id="em-add">+ Adicionar integrante</button>
+      </div>
+    </section>
+
+    <section id="tab-faltas" class="tab-panel">
+      <div class="panel-card">
+        <h2>Controle de Faltas</h2>
+        <div class="date-row">
+          <label for="faltas-date">Data:</label>
+          <input type="date" id="faltas-date">
+        </div>
+        <div id="faltas-rows"></div>
+        <button class="add-btn" id="faltas-add">+ Adicionar nome</button>
+      </div>
+    </section>
+
+    <section id="tab-tps" class="tab-panel">
+      <div class="two-col">
+        <div class="panel-card">
+          <h2>TP</h2>
+          <div class="pdf-upload-zone" id="tps-upload-zone">
+            Clique aqui ou arraste arquivos PDF para adicionar um TP
+            <input type="file" id="tps-file-input" accept="application/pdf" multiple style="display:none">
+          </div>
+          <div class="pdf-list" id="tps-list"></div>
+        </div>
+        <div class="panel-card">
+          <h2>TP Pronto</h2>
+          <div class="pdf-upload-zone" id="tps-prontos-upload-zone">
+            Clique aqui ou arraste arquivos PDF para adicionar um TP pronto
+            <input type="file" id="tps-prontos-file-input" accept="application/pdf" multiple style="display:none">
+          </div>
+          <div class="pdf-list" id="tps-prontos-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-manuais" class="tab-panel">
+      <div class="panel-card">
+        <h2>Principais Manuais</h2>
+        <div class="pdf-upload-zone" id="manuais-upload-zone">
+          Clique aqui ou arraste arquivos PDF para adicionar um manual
+          <input type="file" id="manuais-file-input" accept="application/pdf" multiple style="display:none">
+        </div>
+        <div class="pdf-list" id="manuais-list"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="sync-badge" id="sync-badge"><span class="sync-dot"></span><span id="sync-label">conectando…</span></div>
+
+<!-- TEMA modal -->
+<div class="modal-overlay" id="tema-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-close="tema-modal">&times;</button>
+    <h3>TEMA</h3>
+    <div id="tema-content"></div>
+  </div>
+</div>
+
+<!-- KMZ modal -->
+<div class="modal-overlay" id="kmz-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-close="kmz-modal">&times;</button>
+    <h3>KMZ do TEMA</h3>
+    <p style="color:var(--text-dim); font-size:.85rem; margin-bottom:12px;">Cole o link do arquivo KMZ. Ao abrir, o link levará direto ao arquivo no Google Earth (ou fará o download, caso o Google Earth não esteja associado no dispositivo).</p>
+    <input type="url" id="kmz-link-input" placeholder="https://...">
+    <div id="kmz-error" style="display:none; color:var(--danger-light); font-size:.82rem; margin:-6px 0 12px;"></div>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <button class="primary-btn" id="kmz-save-btn">Salvar link</button>
+      <a href="#" id="kmz-open-link" target="_blank" rel="noopener" style="display:none; color:var(--gold-light); font-size:.88rem;">Abrir no Google Earth &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- Generic PDF viewer modal -->
+<div class="modal-overlay" id="pdf-viewer-overlay">
+  <div class="modal-box">
+    <button class="modal-close" data-close="pdf-viewer-overlay">&times;</button>
+    <h3>Visualizar PDF</h3>
+    <div id="pdf-viewer-title"></div>
+    <div id="pdf-viewer-pages"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCibtMIsB8mscdtNIge2RUJmKQLcnIbric",
+  authDomain: "app-eceme.firebaseapp.com",
+  databaseURL: "https://app-eceme-default-rtdb.firebaseio.com",
+  projectId: "app-eceme",
+  storageBucket: "app-eceme.firebasestorage.app",
+  messagingSenderId: "23812857540",
+  appId: "1:23812857540:web:abf339f96f8da3e8883391"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+const OPS = [
+  {id:'hefesto',   label:'Op HEFESTO',   icon:'assets/op-hefesto-icon.png'},
+  {id:'spartacus', label:'Op SPARTACUS', icon:'assets/op-spartacus-icon.png'},
+  {id:'azuver',    label:'AZUVER',       icon:'assets/op-azuver-icon.png'},
+];
+
+let currentOp = localStorage.getItem('eceme_current_op') || 'hefesto';
+if (!OPS.find(o => o.id === currentOp)) currentOp = 'hefesto';
+
+let activeRefs = [];
+let opState = { em:{}, faltas:{data:'', pessoas:{}}, tema:null, kmzLink:'', tps:{}, 'tps-prontos':{}, manuais:{} };
+
+function $(sel, root=document){ return root.querySelector(sel); }
+function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
+function uid(){ return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function debounce(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); }; }
+
+function setSyncStatus(online){
+  const badge = $('#sync-badge');
+  badge.classList.toggle('online', online);
+  $('#sync-label').textContent = online ? 'sincronizado' : 'conectando…';
+}
+
+/* ============ Auth ============ */
+auth.onAuthStateChanged(user => {
+  if (user) {
+    initOperationUI();
+    switchOperation(currentOp, true);
+  }
+});
+auth.signInAnonymously().catch(err => console.error('Erro de autenticação', err));
+
+db.ref('.info/connected').on('value', snap => setSyncStatus(snap.val() === true));
+
+/* ============ Operation selector ============ */
+function initOperationUI(){
+  const selector = $('#op-selector');
+  const currentBtn = $('#op-current-btn');
+  currentBtn.addEventListener('click', () => selector.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!selector.contains(e.target)) selector.classList.remove('open');
+  });
+  $all('#op-dropdown button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchOperation(btn.dataset.op);
+      selector.classList.remove('open');
+    });
+  });
+  updateOperationLabel();
+}
+
+function updateOperationLabel(){
+  const op = OPS.find(o => o.id === currentOp);
+  $('#op-current-label').textContent = op.label;
+  $('#op-badge-icon').src = op.icon;
+  $('#op-badge-icon').alt = 'Símbolo de ' + op.label;
+  $all('#op-dropdown button').forEach(b => b.classList.toggle('active', b.dataset.op === currentOp));
+}
+
+function switchOperation(opId, silent){
+  currentOp = opId;
+  localStorage.setItem('eceme_current_op', opId);
+  updateOperationLabel();
+  attachListeners();
+}
+
+/* ============ Firebase listeners (scoped per operation) ============ */
+function attachListeners(){
+  activeRefs.forEach(({ref, cb}) => ref.off('value', cb));
+  activeRefs = [];
+
+  const base = db.ref('operations/' + currentOp);
+
+  const emCb = snap => { opState.em = snap.val() || {}; renderEm(); };
+  base.child('em').on('value', emCb);
+  activeRefs.push({ref: base.child('em'), cb: emCb});
+
+  const faltasCb = snap => { opState.faltas = snap.val() || {data:'', pessoas:{}}; renderFaltas(); };
+  base.child('faltas').on('value', faltasCb);
+  activeRefs.push({ref: base.child('faltas'), cb: faltasCb});
+
+  const temaCb = snap => { opState.tema = snap.val(); renderTemaButton(); if($('#tema-modal').classList.contains('open')) renderTemaModal(); };
+  base.child('tema').on('value', temaCb);
+  activeRefs.push({ref: base.child('tema'), cb: temaCb});
+
+  const kmzCb = snap => { opState.kmzLink = snap.val() || ''; if($('#kmz-modal').classList.contains('open')) renderKmzModal(); };
+  base.child('kmzLink').on('value', kmzCb);
+  activeRefs.push({ref: base.child('kmzLink'), cb: kmzCb});
+
+  const tpsCb = snap => { opState.tps = snap.val() || {}; renderPdfList('tps'); };
+  base.child('tps').on('value', tpsCb);
+  activeRefs.push({ref: base.child('tps'), cb: tpsCb});
+
+  const tpsProntosCb = snap => { opState['tps-prontos'] = snap.val() || {}; renderPdfList('tps-prontos'); };
+  base.child('tps-prontos').on('value', tpsProntosCb);
+  activeRefs.push({ref: base.child('tps-prontos'), cb: tpsProntosCb});
+
+  const manuaisCb = snap => { opState.manuais = snap.val() || {}; renderPdfList('manuais'); };
+  base.child('manuais').on('value', manuaisCb);
+  activeRefs.push({ref: base.child('manuais'), cb: manuaisCb});
+}
+
+function opRef(path){ return db.ref('operations/' + currentOp + '/' + path); }
+
+/* ============ Tabs ============ */
+$all('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $all('.tab-btn').forEach(b => b.classList.remove('active'));
+    $all('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    $('#tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============ Funções do EM ============ */
+function renderEm(){
+  const container = $('#em-rows');
+  const entries = Object.entries(opState.em || {});
+
+  if (entries.length === 0){
+    container.innerHTML = '<div class="empty-hint">Nenhum integrante adicionado ainda.</div>';
+    return;
+  }
+  const hint = container.querySelector('.empty-hint');
+  if (hint) hint.remove();
+
+  const newKeys = new Set(entries.map(([k]) => k));
+  $all('[data-row-key]', container).forEach(row => {
+    if (!newKeys.has(row.dataset.rowKey)) row.remove();
+  });
+
+  entries.forEach(([key, member]) => {
+    let row = container.querySelector(`[data-row-key="${key}"]`);
+    if (!row){
+      row = document.createElement('div');
+      row.className = 'row-flex';
+      row.dataset.rowKey = key;
+      row.innerHTML = `
+        <input type="text" placeholder="Nome do militar" data-field="nome">
+        <input type="text" placeholder="Função" data-field="funcao">
+        <button class="icon-btn" title="Remover">&times;</button>
+      `;
+      container.appendChild(row);
+      const nomeInput = row.querySelector('[data-field="nome"]');
+      const funcaoInput = row.querySelector('[data-field="funcao"]');
+      nomeInput.addEventListener('input', debounce(() => opRef('em/' + key + '/nome').set(nomeInput.value), 400));
+      funcaoInput.addEventListener('input', debounce(() => opRef('em/' + key + '/funcao').set(funcaoInput.value), 400));
+      row.querySelector('.icon-btn').addEventListener('click', () => opRef('em/' + key).remove());
+    }
+    const nomeInput = row.querySelector('[data-field="nome"]');
+    const funcaoInput = row.querySelector('[data-field="funcao"]');
+    if (document.activeElement !== nomeInput && nomeInput.value !== (member.nome||'')) nomeInput.value = member.nome||'';
+    if (document.activeElement !== funcaoInput && funcaoInput.value !== (member.funcao||'')) funcaoInput.value = member.funcao||'';
+  });
+}
+$('#em-add').addEventListener('click', () => {
+  opRef('em/' + uid()).set({nome:'', funcao:''});
+});
+
+/* ============ Controle de Faltas ============ */
+$('#faltas-date').addEventListener('change', e => {
+  opRef('faltas/data').set(e.target.value);
+});
+
+function renderFaltas(){
+  const dateInput = $('#faltas-date');
+  if (document.activeElement !== dateInput) dateInput.value = opState.faltas.data || '';
+
+  const container = $('#faltas-rows');
+  const pessoas = opState.faltas.pessoas || {};
+  const entries = Object.entries(pessoas);
+
+  if (entries.length === 0){
+    container.innerHTML = '<div class="empty-hint">Nenhum nome adicionado ainda.</div>';
+    return;
+  }
+  const hint = container.querySelector('.empty-hint');
+  if (hint) hint.remove();
+
+  const newKeys = new Set(entries.map(([k]) => k));
+  $all('[data-row-key]', container).forEach(row => {
+    if (!newKeys.has(row.dataset.rowKey)) row.remove();
+  });
+
+  entries.forEach(([key, p]) => {
+    let row = container.querySelector(`[data-row-key="${key}"]`);
+    if (!row){
+      row = document.createElement('div');
+      row.className = 'presence-row';
+      row.dataset.rowKey = key;
+      row.innerHTML = `
+        <input type="text" placeholder="Nome" data-field="nome">
+        <div class="dot-option present" data-status="presente"><span class="dot"></span> Estarei presente</div>
+        <div class="dot-option absent" data-status="ausente"><span class="dot"></span> Não irei</div>
+        <button class="icon-btn" title="Remover">&times;</button>
+      `;
+      container.appendChild(row);
+      const nomeInput = row.querySelector('[data-field="nome"]');
+      nomeInput.addEventListener('input', debounce(() => opRef('faltas/pessoas/' + key + '/nome').set(nomeInput.value), 400));
+      row.querySelector('.icon-btn').addEventListener('click', () => opRef('faltas/pessoas/' + key).remove());
+      $all('.dot-option', row).forEach(el => {
+        el.addEventListener('click', () => {
+          const current = (opState.faltas.pessoas[key] || {}).status;
+          const newStatus = current === el.dataset.status ? null : el.dataset.status;
+          opRef('faltas/pessoas/' + key + '/status').set(newStatus);
+        });
+      });
+    }
+    const nomeInput = row.querySelector('[data-field="nome"]');
+    if (document.activeElement !== nomeInput && nomeInput.value !== (p.nome||'')) nomeInput.value = p.nome||'';
+    row.querySelector('.dot-option.present').classList.toggle('selected', p.status === 'presente');
+    row.querySelector('.dot-option.absent').classList.toggle('selected', p.status === 'ausente');
+  });
+}
+$('#faltas-add').addEventListener('click', () => {
+  opRef('faltas/pessoas/' + uid()).set({nome:'', status:null});
+});
+
+/* ============ PDF helpers ============ */
+function readFileAsDataURL(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function formatBytes(bytes){
+  if (!bytes) return '';
+  const units = ['B','KB','MB','GB'];
+  let i = 0; let v = bytes;
+  while (v >= 1024 && i < units.length-1){ v /= 1024; i++; }
+  return v.toFixed(v < 10 && i>0 ? 1 : 0) + ' ' + units[i];
+}
+async function uploadPdfsTo(refPath, fileList){
+  for (const file of Array.from(fileList)){
+    if (file.type !== 'application/pdf'){ continue; }
+    const dataUrl = await readFileAsDataURL(file);
+    const key = uid();
+    await db.ref('operations/' + currentOp + '/' + refPath + '/' + key).set({
+      fileName: file.name,
+      size: file.size,
+      fileData: dataUrl,
+      uploadedAt: Date.now()
+    });
+  }
+}
+function downloadDataUrl(dataUrl, fileName){
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = fileName || 'documento.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+async function openPdfViewer(dataUrl, title){
+  $('#pdf-viewer-title').textContent = title || '';
+  const pagesEl = $('#pdf-viewer-pages');
+  pagesEl.innerHTML = '<div class="empty-hint">Carregando PDF…</div>';
+  openModal('pdf-viewer-overlay');
+  try{
+    const loadingTask = pdfjsLib.getDocument({url: dataUrl});
+    const pdf = await loadingTask.promise;
+    pagesEl.innerHTML = '';
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++){
+      const page = await pdf.getPage(pageNum);
+      const viewport = page.getViewport({scale: 1.3});
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      pagesEl.appendChild(canvas);
+      await page.render({canvasContext: canvas.getContext('2d'), viewport}).promise;
+    }
+  } catch(err){
+    pagesEl.innerHTML = '<div class="empty-hint">Não foi possível carregar o PDF.</div>';
+    console.error(err);
+  }
+}
+
+/* ============ TPs / Manuais lists ============ */
+function setupPdfSection(kind){
+  const zone = $('#' + kind + '-upload-zone');
+  const input = $('#' + kind + '-file-input');
+  zone.addEventListener('click', () => input.click());
+  input.addEventListener('change', async () => {
+    await uploadPdfsTo(kind, input.files);
+    input.value = '';
+  });
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--gold)'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+  zone.addEventListener('drop', async e => {
+    e.preventDefault();
+    zone.style.borderColor = '';
+    await uploadPdfsTo(kind, e.dataTransfer.files);
+  });
+}
+setupPdfSection('tps');
+setupPdfSection('tps-prontos');
+setupPdfSection('manuais');
+
+function renderPdfList(kind){
+  const container = $('#' + kind + '-list');
+  const entries = Object.entries(opState[kind] || {}).sort((a,b) => (a[1].uploadedAt||0)-(b[1].uploadedAt||0));
+  if (entries.length === 0){
+    container.innerHTML = '<div class="empty-hint">Nenhum arquivo adicionado ainda.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  entries.forEach(([key, file]) => {
+    const card = document.createElement('div');
+    card.className = 'pdf-card';
+    card.innerHTML = `
+      <svg class="pdf-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      <div class="pdf-info">
+        <div class="pdf-name">${escapeHtml(file.fileName||'documento.pdf')}</div>
+        <div class="pdf-meta">${formatBytes(file.size)}</div>
+      </div>
+      <div class="pdf-actions">
+        <button data-open="${key}">Abrir</button>
+        <button data-download="${key}">Baixar</button>
+        <button class="remove-btn" data-remove="${key}">Remover</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  $all('#' + kind + '-list [data-open]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const file = opState[kind][btn.dataset.open];
+      openPdfViewer(file.fileData, file.fileName);
+    });
+  });
+  $all('#' + kind + '-list [data-download]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const file = opState[kind][btn.dataset.download];
+      downloadDataUrl(file.fileData, file.fileName);
+    });
+  });
+  $all('#' + kind + '-list [data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (confirm('Remover este arquivo para todos os usuários?')){
+        opRef(kind + '/' + btn.dataset.remove).remove();
+      }
+    });
+  });
+}
+
+/* ============ TEMA modal ============ */
+function renderTemaButton(){ /* nothing visual on the pill button itself */ }
+function renderTemaModal(){
+  const content = $('#tema-content');
+  const file = opState.tema;
+  if (!file){
+    content.innerHTML = `
+      <div class="pdf-upload-zone" id="tema-upload-zone">
+        Clique aqui para enviar o PDF do TEMA
+        <input type="file" id="tema-file-input" accept="application/pdf" style="display:none">
+      </div>
+    `;
+    $('#tema-upload-zone').addEventListener('click', () => $('#tema-file-input').click());
+    $('#tema-file-input').addEventListener('change', async e => {
+      if (!e.target.files[0]) return;
+      const f = e.target.files[0];
+      const dataUrl = await readFileAsDataURL(f);
+      await opRef('tema').set({fileName:f.name, size:f.size, fileData:dataUrl, uploadedAt:Date.now()});
+    });
+  } else {
+    content.innerHTML = `
+      <div class="pdf-card" style="margin-bottom:14px;">
+        <svg class="pdf-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <div class="pdf-info">
+          <div class="pdf-name">${escapeHtml(file.fileName||'tema.pdf')}</div>
+          <div class="pdf-meta">${formatBytes(file.size)}</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="primary-btn" id="tema-open-btn">Abrir</button>
+        <button id="tema-download-btn">Baixar</button>
+        <button id="tema-replace-btn">Substituir</button>
+        <button id="tema-remove-btn" style="color:var(--danger-light);">Remover</button>
+      </div>
+      <input type="file" id="tema-file-input-replace" accept="application/pdf" style="display:none">
+    `;
+    $('#tema-open-btn').addEventListener('click', () => openPdfViewer(file.fileData, file.fileName));
+    $('#tema-download-btn').addEventListener('click', () => downloadDataUrl(file.fileData, file.fileName));
+    $('#tema-replace-btn').addEventListener('click', () => $('#tema-file-input-replace').click());
+    $('#tema-file-input-replace').addEventListener('change', async e => {
+      if (!e.target.files[0]) return;
+      const f = e.target.files[0];
+      const dataUrl = await readFileAsDataURL(f);
+      await opRef('tema').set({fileName:f.name, size:f.size, fileData:dataUrl, uploadedAt:Date.now()});
+    });
+    $('#tema-remove-btn').addEventListener('click', () => {
+      if (confirm('Remover o PDF do TEMA?')) opRef('tema').remove();
+    });
+  }
+}
+$('#btn-tema').addEventListener('click', () => { renderTemaModal(); openModal('tema-modal'); });
+
+/* ============ KMZ modal ============ */
+function renderKmzModal(){
+  $('#kmz-link-input').value = opState.kmzLink || '';
+  $('#kmz-error').style.display = 'none';
+  const openLink = $('#kmz-open-link');
+  if (opState.kmzLink){
+    openLink.style.display = 'inline';
+    openLink.href = opState.kmzLink;
+  } else {
+    openLink.style.display = 'none';
+  }
+}
+const kmzInput = $('#kmz-link-input');
+const kmzError = $('#kmz-error');
+// Prevent the browser's default behavior of dumping a dropped file's raw text
+// content into the field — this field only accepts a typed/pasted URL.
+['dragover', 'drop'].forEach(evt => {
+  kmzInput.addEventListener(evt, e => e.preventDefault());
+});
+kmzInput.addEventListener('input', () => { kmzError.style.display = 'none'; });
+$('#kmz-save-btn').addEventListener('click', () => {
+  const val = kmzInput.value.trim();
+  if (val && !/^https?:\/\//i.test(val)){
+    kmzError.textContent = 'Isso não parece ser um link. Cole a URL do arquivo KMZ (começando com http:// ou https://) — não arraste o arquivo diretamente aqui.';
+    kmzError.style.display = 'block';
+    return;
+  }
+  opRef('kmzLink').set(val);
+});
+$('#btn-kmz').addEventListener('click', () => { renderKmzModal(); openModal('kmz-modal'); });
+
+/* ============ Modal generic controls ============ */
+function openModal(id){ $('#' + id).classList.add('open'); }
+function closeModal(id){ $('#' + id).classList.remove('open'); }
+$all('.modal-close').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
+$all('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+});
+</script>
+</body>
+</html>
