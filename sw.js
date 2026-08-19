@@ -1,4 +1,4 @@
-const CACHE_NAME = 'app-eceme-v17';
+const CACHE_NAME = 'app-eceme-v18';
 const PRECACHE_URLS = [
   './',
   './index.html',

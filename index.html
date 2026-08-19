@@ -155,44 +155,74 @@
   .top-actions button:active{transform:scale(.97);}
   .top-actions button svg{width:16px;height:16px;flex:none;}
 
-  /* ===== Body layout ===== */
-  .app-body{
-    display:flex;
+  /* ===== Home screen (hub) ===== */
+  .hidden{display:none !important;}
+  .home-screen{
     max-width:1100px;
     margin:0 auto;
-    gap:18px;
-    padding:0 16px;
-    align-items:flex-start;
+    padding:8px 16px 40px;
   }
-  .sidebar{
+  .nav-cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+    gap:14px;
+  }
+  .nav-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    color:var(--text);
+    cursor:pointer;
     display:flex;
     flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
     gap:10px;
-    width:220px;
-    flex:none;
+    padding:26px 16px;
+    font-size:.95rem;
+    font-weight:700;
+    letter-spacing:.01em;
+    transition:border-color .15s, box-shadow .15s, transform .1s;
   }
-  .tab-btn{
+  .nav-card svg{width:30px;height:30px;flex:none;color:var(--gold);}
+  .nav-card:hover{border-color:var(--gold); box-shadow:0 6px 18px rgba(32,41,28,.08); transform:translateY(-1px);}
+  .nav-card:active{transform:scale(.98);}
+  .home-section-label{
+    text-align:center;
+    font-size:.74rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--text-dim);
+    margin:30px 0 12px;
+  }
+
+  /* ===== Tab view (full page + back) ===== */
+  .tab-view .app-body{
+    max-width:1100px;
+    margin:0 auto;
+    padding:0 16px;
+  }
+  .back-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
     background:var(--panel);
     border:1px solid var(--border);
     color:var(--text);
-    padding:16px 16px;
-    border-radius:var(--radius);
+    padding:10px 18px;
+    border-radius:999px;
     cursor:pointer;
-    text-align:left;
-    font-size:.98rem;
     font-weight:600;
-    letter-spacing:.02em;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    transition:background .15s,border-color .15s;
+    font-size:.88rem;
+    margin-bottom:16px;
+    transition:border-color .15s;
   }
-  .tab-btn svg{width:20px;height:20px;flex:none;color:var(--gold);}
-  .tab-btn:hover{border-color:var(--gold);}
-  .tab-btn.active{background:var(--olive); border-color:var(--gold);}
+  .back-btn:hover{border-color:var(--gold);}
+  .back-btn svg{width:16px;height:16px;flex:none;}
 
   .content{
-    flex:1;
     min-width:0;
   }
   .two-col{
@@ -732,20 +762,9 @@
     .corner-icon{width:34px;}
     .title-box{min-width:0; width:100%; max-width:320px; padding:12px 18px;}
     .title-box h1{font-size:1.15rem;}
-    .app-body{flex-direction:column;}
-    .sidebar{display:grid; grid-template-columns:repeat(3, 1fr); width:100%; gap:8px;}
-    .tab-btn{
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      white-space:normal;
-      padding:10px 6px;
-      font-size:.74rem;
-      line-height:1.25;
-      gap:5px;
-    }
-    .tab-btn svg{width:18px; height:18px;}
+    .nav-cards{grid-template-columns:repeat(3, 1fr); gap:8px;}
+    .nav-card{padding:16px 8px; font-size:.74rem; gap:6px;}
+    .nav-card svg{width:22px; height:22px;}
     .top-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
     .top-actions button{border-radius:10px; padding:10px 12px; font-size:.82rem; text-align:center;}
     .panel-card{padding:16px;}
@@ -780,48 +799,57 @@
   <img class="corner-icon right" id="op-badge-icon" src="assets/op-hefesto-icon.png" alt="Símbolo da Operação">
 </header>
 
-<div class="top-actions">
-  <button id="btn-constituicao">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    CONSTITUIÇÃO DO EM
-  </button>
-  <button id="btn-tema">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
-    TEMA
-  </button>
-  <button id="btn-kmz">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    KMZ do TEMA
-  </button>
-  <button id="btn-drive">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-    GOOGLE DRIVE
-  </button>
-</div>
-
-<div class="app-body">
-  <nav class="sidebar">
-    <button class="tab-btn active" data-tab="inicio">
+<div id="home-screen" class="home-screen">
+  <nav class="nav-cards">
+    <button class="nav-card" data-tab="inicio">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
-      Início
+      Controle da Operação
     </button>
-    <button class="tab-btn" data-tab="controle-em">
+    <button class="nav-card" data-tab="controle-em">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
       Controle do EM
     </button>
-    <button class="tab-btn" data-tab="tps">
+    <button class="nav-card" data-tab="tps">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
       Trabalhos Pedidos
     </button>
-    <button class="tab-btn" data-tab="celulas">
+    <button class="nav-card" data-tab="celulas">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Estado-Maior
     </button>
-    <button class="tab-btn" data-tab="manuais">
+    <button class="nav-card" data-tab="manuais">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       Principais manuais
     </button>
   </nav>
+
+  <p class="home-section-label">Documentos e links rápidos</p>
+  <div class="top-actions">
+    <button id="btn-constituicao">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      CONSTITUIÇÃO DO EM
+    </button>
+    <button id="btn-tema">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      TEMA
+    </button>
+    <button id="btn-kmz">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      KMZ do TEMA
+    </button>
+    <button id="btn-drive">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      GOOGLE DRIVE
+    </button>
+  </div>
+</div>
+
+<div id="tab-view" class="tab-view hidden">
+  <div class="app-body">
+    <button id="btn-back-home" class="back-btn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Voltar
+    </button>
 
   <main class="content">
 
@@ -884,7 +912,7 @@
     <section id="tab-celulas" class="tab-panel">
       <div class="panel-card">
         <h2>Estado-Maior Conjunto &mdash; Células</h2>
-        <p class="celulas-intro">Contribuição de cada seção do EMCj em cada fase do PPC, com espaço para os chefes anexarem seus produtos. A Seção de Operações (D-3) reúne os documentos nomeados do Exame de Situação Operacional; as demais seções anexam seu produto de cada fase. O progresso alimenta automaticamente o painel da aba Início.</p>
+        <p class="celulas-intro">Contribuição de cada seção do EMCj em cada fase do PPC, com espaço para os chefes anexarem seus produtos. A Seção de Operações (D-3) reúne os documentos nomeados do Exame de Situação Operacional; as demais seções anexam seu produto de cada fase. O progresso alimenta automaticamente o painel da aba Controle da Operação.</p>
         <div class="accordion" id="celulas-accordion"></div>
       </div>
     </section>
@@ -901,6 +929,7 @@
     </section>
 
   </main>
+  </div>
 </div>
 
 <div class="sync-badge" id="sync-badge"><span class="sync-dot"></span><span id="sync-label">conectando…</span></div>
@@ -1218,15 +1247,23 @@ function attachListeners(){
 
 function opRef(path){ return db.ref('operations/' + currentOp + '/' + path); }
 
-/* ============ Tabs ============ */
-$all('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    $all('.tab-btn').forEach(b => b.classList.remove('active'));
-    $all('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    $('#tab-' + btn.dataset.tab).classList.add('active');
-  });
+/* ============ Tabs (home screen -> full page + back) ============ */
+function openTab(tabId){
+  $all('.tab-panel').forEach(p => p.classList.remove('active'));
+  $('#tab-' + tabId).classList.add('active');
+  $('#home-screen').classList.add('hidden');
+  $('#tab-view').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+function goHome(){
+  $('#tab-view').classList.add('hidden');
+  $('#home-screen').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+$all('.nav-card').forEach(btn => {
+  btn.addEventListener('click', () => openTab(btn.dataset.tab));
 });
+$('#btn-back-home').addEventListener('click', goHome);
 
 /* ============ Controle do EM (faltas + funções) ============ */
 $('#faltas-date').addEventListener('change', e => {
