@@ -218,6 +218,27 @@
     margin-bottom:14px;
     letter-spacing:.02em;
   }
+  .card-header-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .card-header-row h2{margin-bottom:0;}
+  .faltas-count{
+    display:none;
+    font-size:.82rem;
+    font-weight:700;
+    color:var(--danger-light);
+    background:rgba(179,56,44,.14);
+    border:1px solid var(--danger-light);
+    padding:5px 12px;
+    border-radius:20px;
+    letter-spacing:.02em;
+    flex:none;
+  }
+  .faltas-count.show{display:inline-block;}
 
   /* ===== Funcoes do EM ===== */
   .row-flex{display:flex; gap:10px; margin-bottom:10px; align-items:center;}
@@ -550,6 +571,10 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
     KMZ do TEMA
   </button>
+  <button id="btn-drive">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    GOOGLE DRIVE
+  </button>
 </div>
 
 <div class="app-body">
@@ -576,7 +601,10 @@
 
     <section id="tab-faltas" class="tab-panel">
       <div class="panel-card">
-        <h2>Controle de Faltas</h2>
+        <div class="card-header-row">
+          <h2>Controle de Faltas</h2>
+          <span class="faltas-count" id="faltas-count"></span>
+        </div>
         <div class="date-row">
           <label for="faltas-date">Data:</label>
           <input type="date" id="faltas-date">
@@ -599,16 +627,16 @@
         <div class="panel-card">
           <h2>TP</h2>
           <div class="pdf-upload-zone" id="tps-upload-zone">
-            Clique aqui ou arraste arquivos PDF para adicionar um TP
-            <input type="file" id="tps-file-input" accept="application/pdf" multiple style="display:none">
+            Clique aqui ou arraste arquivos (PDF, imagem, Word ou PowerPoint) para adicionar um TP
+            <input type="file" id="tps-file-input" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.doc,.docx,.ppt,.pptx" multiple style="display:none">
           </div>
           <div class="pdf-list" id="tps-list"></div>
         </div>
         <div class="panel-card">
           <h2>TP Pronto</h2>
           <div class="pdf-upload-zone" id="tps-prontos-upload-zone">
-            Clique aqui ou arraste arquivos PDF para adicionar um TP pronto
-            <input type="file" id="tps-prontos-file-input" accept="application/pdf" multiple style="display:none">
+            Clique aqui ou arraste arquivos (PDF, imagem, Word ou PowerPoint) para adicionar um TP pronto
+            <input type="file" id="tps-prontos-file-input" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.doc,.docx,.ppt,.pptx" multiple style="display:none">
           </div>
           <div class="pdf-list" id="tps-prontos-list"></div>
         </div>
@@ -624,8 +652,8 @@
       <div class="panel-card">
         <h2>Principais Manuais</h2>
         <div class="pdf-upload-zone" id="manuais-upload-zone">
-          Clique aqui ou arraste arquivos PDF para adicionar um manual
-          <input type="file" id="manuais-file-input" accept="application/pdf" multiple style="display:none">
+          Clique aqui ou arraste arquivos (PDF, imagem, Word ou PowerPoint) para adicionar um manual
+          <input type="file" id="manuais-file-input" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.doc,.docx,.ppt,.pptx" multiple style="display:none">
         </div>
         <div class="pdf-list" id="manuais-list"></div>
       </div>
@@ -664,6 +692,21 @@
     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
       <button class="primary-btn" id="kmz-save-btn">Salvar link</button>
       <a href="#" id="kmz-open-link" target="_blank" rel="noopener" style="display:none; color:var(--gold-light); font-size:.88rem;">Abrir no Google Earth &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- Google Drive modal -->
+<div class="modal-overlay" id="drive-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-close="drive-modal">&times;</button>
+    <h3>Google Drive</h3>
+    <p style="color:var(--text-dim); font-size:.85rem; margin-bottom:12px;">Cole o link de um arquivo ou pasta do Google Drive. Quem tiver acesso ao link poderá editar em tempo real, conforme as permissões definidas no próprio Drive.</p>
+    <input type="url" id="drive-link-input" placeholder="https://drive.google.com/...">
+    <div id="drive-error" style="display:none; color:var(--danger-light); font-size:.82rem; margin:-6px 0 12px;"></div>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <button class="primary-btn" id="drive-save-btn">Salvar link</button>
+      <a href="#" id="drive-open-link" target="_blank" rel="noopener" style="display:none; color:var(--gold-light); font-size:.88rem;">Abrir no Google Drive &rarr;</a>
     </div>
   </div>
 </div>
@@ -761,7 +804,7 @@ let currentOp = localStorage.getItem('eceme_current_op') || 'hefesto';
 if (!OPS.find(o => o.id === currentOp)) currentOp = 'hefesto';
 
 let activeRefs = [];
-let opState = { em:{}, faltas:{data:'', pessoas:{}}, tema:null, kmzLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{} };
+let opState = { em:{}, faltas:{data:'', pessoas:{}}, tema:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{} };
 
 function $(sel, root=document){ return root.querySelector(sel); }
 function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
@@ -840,6 +883,10 @@ function attachListeners(){
   const kmzCb = snap => { opState.kmzLink = snap.val() || ''; if($('#kmz-modal').classList.contains('open')) renderKmzModal(); };
   base.child('kmzLink').on('value', kmzCb);
   activeRefs.push({ref: base.child('kmzLink'), cb: kmzCb});
+
+  const driveCb = snap => { opState.driveLink = snap.val() || ''; if($('#drive-modal').classList.contains('open')) renderDriveModal(); };
+  base.child('driveLink').on('value', driveCb);
+  activeRefs.push({ref: base.child('driveLink'), cb: driveCb});
 
   const tpsCb = snap => { opState.tps = snap.val() || {}; renderPdfList('tps'); };
   base.child('tps').on('value', tpsCb);
@@ -928,6 +975,15 @@ function renderFaltas(){
   const pessoas = opState.faltas.pessoas || {};
   const entries = Object.entries(pessoas);
 
+  const countEl = $('#faltas-count');
+  const absentCount = entries.filter(([, p]) => p.status === 'ausente').length;
+  if (absentCount > 0){
+    countEl.textContent = 'Faltas: ' + absentCount;
+    countEl.classList.add('show');
+  } else {
+    countEl.classList.remove('show');
+  }
+
   if (entries.length === 0){
     container.innerHTML = '<div class="empty-hint">Nenhum nome adicionado ainda.</div>';
     return;
@@ -990,19 +1046,6 @@ function formatBytes(bytes){
   while (v >= 1024 && i < units.length-1){ v /= 1024; i++; }
   return v.toFixed(v < 10 && i>0 ? 1 : 0) + ' ' + units[i];
 }
-async function uploadPdfsTo(refPath, fileList){
-  for (const file of Array.from(fileList)){
-    if (file.type !== 'application/pdf'){ continue; }
-    const dataUrl = await readFileAsDataURL(file);
-    const key = uid();
-    await db.ref('operations/' + currentOp + '/' + refPath + '/' + key).set({
-      fileName: file.name,
-      size: file.size,
-      fileData: dataUrl,
-      uploadedAt: Date.now()
-    });
-  }
-}
 function downloadDataUrl(dataUrl, fileName){
   const a = document.createElement('a');
   a.href = dataUrl;
@@ -1041,7 +1084,7 @@ function setupPdfSection(kind){
   const input = $('#' + kind + '-file-input');
   zone.addEventListener('click', () => input.click());
   input.addEventListener('change', async () => {
-    await uploadPdfsTo(kind, input.files);
+    await uploadDocsTo(kind, input.files);
     input.value = '';
   });
   zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--gold)'; });
@@ -1049,7 +1092,7 @@ function setupPdfSection(kind){
   zone.addEventListener('drop', async e => {
     e.preventDefault();
     zone.style.borderColor = '';
-    await uploadPdfsTo(kind, e.dataTransfer.files);
+    await uploadDocsTo(kind, e.dataTransfer.files);
   });
 }
 setupPdfSection('tps');
@@ -1057,49 +1100,7 @@ setupPdfSection('tps-prontos');
 setupPdfSection('manuais');
 
 function renderPdfList(kind){
-  const container = $('#' + kind + '-list');
-  const entries = Object.entries(opState[kind] || {}).sort((a,b) => (a[1].uploadedAt||0)-(b[1].uploadedAt||0));
-  if (entries.length === 0){
-    container.innerHTML = '<div class="empty-hint">Nenhum arquivo adicionado ainda.</div>';
-    return;
-  }
-  container.innerHTML = '';
-  entries.forEach(([key, file]) => {
-    const card = document.createElement('div');
-    card.className = 'pdf-card';
-    card.innerHTML = `
-      <svg class="pdf-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
-      <div class="pdf-info">
-        <div class="pdf-name">${escapeHtml(file.fileName||'documento.pdf')}</div>
-        <div class="pdf-meta">${formatBytes(file.size)}</div>
-      </div>
-      <div class="pdf-actions">
-        <button data-open="${key}">Abrir</button>
-        <button data-download="${key}">Baixar</button>
-        <button class="remove-btn" data-remove="${key}">Remover</button>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-  $all('#' + kind + '-list [data-open]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const file = opState[kind][btn.dataset.open];
-      openPdfViewer(file.fileData, file.fileName);
-    });
-  });
-  $all('#' + kind + '-list [data-download]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const file = opState[kind][btn.dataset.download];
-      downloadDataUrl(file.fileData, file.fileName);
-    });
-  });
-  $all('#' + kind + '-list [data-remove]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (confirm('Remover este arquivo para todos os usuários?')){
-        opRef(kind + '/' + btn.dataset.remove).remove();
-      }
-    });
-  });
+  renderDocList($('#' + kind + '-list'), opState[kind], kind);
 }
 
 /* ============ Exame de Situação Operacional ============ */
@@ -1110,6 +1111,7 @@ const EXAME_FASES = [
     {key:'estado-final-desejado-operacional',   label:'Estado Final Desejado Operacional'},
     {key:'problema',                            label:'Problema'},
     {key:'objetivos-operacionais',              label:'Objetivos Operacionais'},
+    {key:'diplan',                               label:'Diplan'},
   ]},
   { id:'fase2', label:'Fase 2', docs:[] },
   { id:'fase3', label:'Fase 3', docs:[] },
@@ -1276,8 +1278,8 @@ function renderTemaModal(){
   if (!file){
     content.innerHTML = `
       <div class="pdf-upload-zone" id="tema-upload-zone">
-        Clique aqui para enviar o PDF do TEMA
-        <input type="file" id="tema-file-input" accept="application/pdf" style="display:none">
+        Clique aqui para enviar o arquivo do TEMA (PDF, imagem, Word ou PowerPoint)
+        <input type="file" id="tema-file-input" accept="${DOC_ACCEPT}" style="display:none">
       </div>
     `;
     $('#tema-upload-zone').addEventListener('click', () => $('#tema-file-input').click());
@@ -1288,23 +1290,24 @@ function renderTemaModal(){
       await opRef('tema').set({fileName:f.name, size:f.size, fileData:dataUrl, uploadedAt:Date.now()});
     });
   } else {
+    const previewable = getExt(file.fileName) === 'pdf' || IMAGE_EXTENSIONS.includes(getExt(file.fileName));
     content.innerHTML = `
       <div class="pdf-card" style="margin-bottom:14px;">
         <svg class="pdf-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
         <div class="pdf-info">
-          <div class="pdf-name">${escapeHtml(file.fileName||'tema.pdf')}</div>
+          <div class="pdf-name">${escapeHtml(file.fileName||'tema')}</div>
           <div class="pdf-meta">${formatBytes(file.size)}</div>
         </div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="primary-btn" id="tema-open-btn">Abrir</button>
+        ${previewable ? '<button class="primary-btn" id="tema-open-btn">Abrir</button>' : ''}
         <button id="tema-download-btn">Baixar</button>
         <button id="tema-replace-btn">Substituir</button>
         <button id="tema-remove-btn" style="color:var(--danger-light);">Remover</button>
       </div>
-      <input type="file" id="tema-file-input-replace" accept="application/pdf" style="display:none">
+      <input type="file" id="tema-file-input-replace" accept="${DOC_ACCEPT}" style="display:none">
     `;
-    $('#tema-open-btn').addEventListener('click', () => openPdfViewer(file.fileData, file.fileName));
+    if (previewable) $('#tema-open-btn').addEventListener('click', () => openDocFile(file));
     $('#tema-download-btn').addEventListener('click', () => downloadDataUrl(file.fileData, file.fileName));
     $('#tema-replace-btn').addEventListener('click', () => $('#tema-file-input-replace').click());
     $('#tema-file-input-replace').addEventListener('change', async e => {
@@ -1350,6 +1353,35 @@ $('#kmz-save-btn').addEventListener('click', () => {
   opRef('kmzLink').set(val);
 });
 $('#btn-kmz').addEventListener('click', () => { renderKmzModal(); openModal('kmz-modal'); });
+
+/* ============ Google Drive modal ============ */
+function renderDriveModal(){
+  $('#drive-link-input').value = opState.driveLink || '';
+  $('#drive-error').style.display = 'none';
+  const openLink = $('#drive-open-link');
+  if (opState.driveLink){
+    openLink.style.display = 'inline';
+    openLink.href = opState.driveLink;
+  } else {
+    openLink.style.display = 'none';
+  }
+}
+const driveInput = $('#drive-link-input');
+const driveError = $('#drive-error');
+['dragover', 'drop'].forEach(evt => {
+  driveInput.addEventListener(evt, e => e.preventDefault());
+});
+driveInput.addEventListener('input', () => { driveError.style.display = 'none'; });
+$('#drive-save-btn').addEventListener('click', () => {
+  const val = driveInput.value.trim();
+  if (val && !/^https?:\/\//i.test(val)){
+    driveError.textContent = 'Isso não parece ser um link. Cole a URL do Google Drive (começando com http:// ou https://).';
+    driveError.style.display = 'block';
+    return;
+  }
+  opRef('driveLink').set(val);
+});
+$('#btn-drive').addEventListener('click', () => { renderDriveModal(); openModal('drive-modal'); });
 
 /* ============ Modal generic controls ============ */
 function openModal(id){ $('#' + id).classList.add('open'); }
