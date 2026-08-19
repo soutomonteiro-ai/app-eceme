@@ -4,32 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>App ECEME</title>
-<meta name="theme-color" content="#0d1210">
+<meta name="theme-color" content="#f2f4ee">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <style>
   :root{
-    --bg:#0d1210;
-    --bg-alt:#111712;
-    --panel:#161d19;
-    --panel2:#1c241e;
-    --olive:#3f4a35;
-    --olive-light:#4d5a41;
-    --border:#2a332a;
+    --bg:#f2f4ee;
+    --bg-alt:#ffffff;
+    --panel:#ffffff;
+    --panel2:#eef1e6;
+    --olive:#dde6d0;
+    --olive-light:#cddbb9;
+    --border:#d9dfcd;
     --gold:#c9a227;
-    --gold-light:#e0c15c;
-    --text:#eef1ea;
-    --text-dim:#aab5a4;
+    --gold-light:#8a6a12;
+    --text:#20291c;
+    --text-dim:#5c6555;
     --danger:#b3382c;
-    --danger-light:#e0574a;
-    --success:#3f7d43;
-    --success-light:#5aa860;
+    --danger-light:#c0392b;
+    --success:#2e7d32;
+    --success-light:#1f6b24;
     --radius:12px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:linear-gradient(180deg,#0a0f0c 0%, #10160f 100%);
+    background:linear-gradient(180deg,#f6f8f1 0%, #eef1e6 100%);
     color:var(--text);
     font-family:"Segoe UI",Roboto,Arial,sans-serif;
     min-height:100vh;
@@ -56,7 +56,7 @@
     height:auto;
     max-height:80px;
     object-fit:contain;
-    filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));
+    filter:drop-shadow(0 2px 6px rgba(32,41,28,.18));
   }
   .corner-icon.left{left:14px;}
   .corner-icon.right{right:14px;}
@@ -67,7 +67,7 @@
     border-radius:var(--radius);
     padding:14px 26px;
     text-align:center;
-    box-shadow:0 4px 18px rgba(0,0,0,.35);
+    box-shadow:0 4px 18px rgba(32,41,28,.08);
     min-width:280px;
   }
   .title-box h1{
@@ -110,7 +110,7 @@
     display:none;
     z-index:50;
     min-width:200px;
-    box-shadow:0 10px 26px rgba(0,0,0,.5);
+    box-shadow:0 10px 26px rgba(32,41,28,.14);
   }
   .op-selector.open .op-dropdown{display:block;}
   .op-dropdown button{
@@ -273,7 +273,7 @@
     padding:9px 12px;
     border-radius:8px;
     font-size:.92rem;
-    color-scheme:dark;
+    color-scheme:light;
   }
   .presence-row{
     background:var(--panel2);
@@ -301,7 +301,7 @@
     padding:10px 12px;
     border-radius:8px;
     font-size:.92rem;
-    color-scheme:dark;
+    color-scheme:light;
   }
   .presence-row .data-input{flex:0 0 150px;}
   .presence-row .nome-input{flex:1 1 200px; min-width:160px; max-width:280px;}
@@ -316,7 +316,7 @@
     border-radius:20px;
     transition:background .15s;
   }
-  .ausente-toggle:hover{background:rgba(255,255,255,.04);}
+  .ausente-toggle:hover{background:rgba(32,41,28,.04);}
   .ausente-toggle input{display:none;}
   .toggle-track{
     width:38px; height:22px;
@@ -575,9 +575,9 @@
   .fase-detail{display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);}
   .progress-row.open .fase-detail{display:flex; flex-direction:column; gap:6px;}
   .fase-detail-item{
-    display:flex; align-items:center; gap:10px;
+    display:flex; align-items:flex-start; gap:10px;
     font-size:.8rem;
-    padding:6px 8px;
+    padding:8px;
     border-radius:6px;
     background:var(--bg-alt);
   }
@@ -586,9 +586,10 @@
     font-weight:700;
     color:var(--gold-light);
     min-width:34px;
+    padding-top:1px;
   }
-  .fase-detail-item .fase-detail-label{flex:1; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .fase-detail-item .fase-detail-status{flex:none; font-weight:600;}
+  .fase-detail-item .fase-detail-label{flex:1; color:var(--text-dim); line-height:1.4;}
+  .fase-detail-item .fase-detail-status{flex:none; font-weight:600; padding-top:1px;}
   .fase-detail-item.done .fase-detail-status{color:var(--success-light);}
   .fase-detail-item.pending .fase-detail-status{color:var(--text-dim);}
 
@@ -657,7 +658,7 @@
   #pdf-viewer-pages{
     max-height:70vh;
     overflow-y:auto;
-    background:#0a0a0a;
+    background:var(--panel2);
     border-radius:8px;
     padding:10px;
     display:flex;
@@ -665,7 +666,7 @@
     align-items:center;
     gap:10px;
   }
-  #pdf-viewer-pages canvas{max-width:100%; box-shadow:0 2px 10px rgba(0,0,0,.5);}
+  #pdf-viewer-pages canvas{max-width:100%; box-shadow:0 2px 10px rgba(32,41,28,.18);}
   #pdf-viewer-title{font-size:.95rem; color:var(--text-dim); margin-bottom:10px; word-break:break-word;}
 
   #image-viewer-overlay .modal-box{max-width:700px;}
@@ -683,7 +684,7 @@
     display:flex; align-items:center; gap:6px;
     z-index:60;
   }
-  .sync-dot{width:8px;height:8px;border-radius:50%;background:#555;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#9aa393;}
   .sync-badge.online .sync-dot{background:var(--success-light);}
 
   .update-banner{
@@ -699,7 +700,7 @@
     border:1px solid var(--gold);
     border-radius:12px;
     padding:12px 16px;
-    box-shadow:0 10px 30px rgba(0,0,0,.5);
+    box-shadow:0 10px 30px rgba(32,41,28,.18);
     transition:bottom .25s ease;
   }
   .update-banner.show{bottom:16px;}
@@ -1419,97 +1420,67 @@ const EXAME_FASES = [
 
 const CELULAS = [
   { id:'d1', codigo:'D-1', nome:'Pessoal',
-    resumo:'Gestão de efetivos, moral, disciplina e assuntos administrativos de pessoal do Comando Operacional.',
+    resumo:'Gestão de efetivos, moral, disciplina e assuntos administrativos de pessoal do Comando Operacional. Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
     fases:{
-      fase1:'Contribui para a Diplan com o levantamento inicial de efetivo disponível e primeiras estimativas de recompletamento.',
-      fase2:'Detalha a situação de pessoal (efetivos, moral, disciplina, mão de obra civil) para compor Nossas Forças e os Fatores de Força e Fraqueza.',
-      fase3:'Avalia o impacto de cada Linha de Ação sobre recompletamento, evacuação e sepultamento, subsidiando o Confronto.',
-      fase4:'Fornece critérios de sustentabilidade de pessoal para a Matriz de Decisão.',
-      fase5:'Registra os desdobramentos de pessoal decorrentes da decisão do Comandante.',
-      fase6:'Elabora o Anexo de Pessoal ao Plano Operacional, com base no Conceito Preliminar da Operação.',
+      fase6:'Confecciona o Anexo de Pessoal e seus apêndices ao Plano Operacional.',
     }},
   { id:'d2', codigo:'D-2', nome:'Inteligência',
     resumo:'Produção de conhecimento sobre o inimigo e o ambiente operacional para apoiar a decisão do Comandante.',
     fases:{
-      fase1:'Levanta conhecimentos iniciais sobre o ambiente operacional e formula as primeiras Necessidades de Inteligência.',
-      fase2:'Produz a Ordem de Batalha, possibilidades e vulnerabilidades do inimigo, e apoia a Comparação de Poderes de Combate.',
-      fase3:'Elabora as Possibilidades do Inimigo (Psb Ini) e a Lista Integrada de Alvos preliminar para o Confronto das Linhas de Ação.',
-      fase4:'Avalia riscos e vulnerabilidades de inteligência associados a cada Linha de Ação na comparação.',
-      fase5:'Consolida o quadro de inteligência que referenda a decisão do Comandante.',
-      fase6:'Elabora o Anexo de Inteligência ao Plano Operacional.',
+      fase2:'Levanta as Características da Área de Responsabilidade, as Forças Inimigas, os Fatores de Força e Fraqueza e as Necessidades de Inteligência.',
+      fase3:'Elabora as Possibilidades do Inimigo (Psb Ini) e apoia o Confronto das Linhas de Ação.',
+      fase6:'Confecciona o Anexo de Inteligência e seus apêndices ao Plano Operacional.',
     }},
   { id:'d3', codigo:'D-3', nome:'Operações',
-    resumo:'Conduz o Processo de Planejamento Conjunto (PPC) e consolida o Exame de Situação Operacional, integrando os produtos de todas as seções.',
+    resumo:'Conduz o Processo de Planejamento Conjunto (PPC) e é responsável pela consolidação e formalização do documento Exame de Situação Operacional, reunindo os produtos de todas as seções.',
     fases:{}},
   { id:'d4', codigo:'D-4', nome:'Logística e Mobilização',
     resumo:'Sustentação logística e mobilização de recursos para as forças em presença.',
     fases:{
-      fase1:'Levanta os recursos logísticos disponíveis e as restrições que afetam o Estado Final Desejado Operacional.',
-      fase2:'Analisa níveis mínimos de estoque e fluxo de apoio logístico, compondo a Determinação Inicial da Adequação da Própria Força.',
-      fase3:'Avalia a viabilidade logística de cada Linha de Ação, apoiando o Confronto com dados de sustentação.',
-      fase4:'Fornece critérios logísticos e de mobilização para a Matriz de Decisão.',
-      fase5:'Consolida a Lista de Necessidades Complementar decorrente da decisão do Comandante.',
-      fase6:'Elabora o Anexo de Logística e Mobilização ao Plano Operacional.',
+      fase2:'Analisa os meios logísticos disponíveis, as forças em presença sob o aspecto logístico e as facilidades e dificuldades da área de responsabilidade.',
+      fase3:'Avalia as Possibilidades do Inimigo e elabora as Linhas de Ação sob o aspecto logístico, apoiando o Confronto.',
+      fase4:'Compara as Linhas de Ação do ponto de vista logístico, priorizando as mais sustentáveis.',
+      fase6:'Confecciona o Anexo de Logística e Mobilização, incluindo a Lista de Necessidades Complementar (LNC), ao Plano Operacional.',
     }},
   { id:'d5', codigo:'D-5', nome:'Planejamento',
-    resumo:'Auxilia diretamente a Seção de Operações na condução do Exame de Situação e na elaboração dos Planos e Ordens.',
+    resumo:'Auxilia diretamente a Seção de Operações na elaboração dos documentos do Exame de Situação e na etapa de Elaboração de Planos e Ordens.',
     fases:{
-      fase1:'Propõe o Estado Final Desejado Operacional e apoia a identificação dos Objetivos Operacionais.',
-      fase2:'Sistematiza a Abordagem Operacional (Desenho Operacional) a partir da compreensão da situação.',
-      fase3:'Consolida a Lista Integrada de Alvos e a LIPA, em coordenação com as demais seções, durante a elaboração das Linhas de Ação.',
-      fase4:'Apoia a montagem da Matriz de Decisão e das matrizes de sincronização preliminares.',
-      fase5:'Formaliza os produtos de planejamento decorrentes da decisão do Comandante.',
-      fase6:'Consolida o Conceito Preliminar da Operação e inicia o Gerenciamento do Risco Operacional (GRO).',
+      fase1:'Propõe ao Comandante o Estado Final Desejado Operacional (EFD Op), quando não definido claramente pelo escalão superior.',
+      fase2:'Desenvolve a Abordagem Operacional (Desenho Operacional) com base nos Centros de Gravidade e no EFD Op.',
+      fase6:'Realiza o Gerenciamento do Risco Operacional (GRO), consolidando o respectivo anexo.',
     }},
   { id:'d6', codigo:'D-6', nome:'Comando e Controle',
     resumo:'Integração das redes e sistemas de Comando e Controle (C²) do Comando Operacional.',
     fases:{
-      fase1:'Levanta a infraestrutura de C² disponível e suas limitações frente à missão.',
-      fase2:'Analisa a integração das redes de C² frente à situação e às forças em presença.',
-      fase3:'Avalia requisitos de C² e de Guerra Eletrônica para cada Linha de Ação.',
-      fase4:'Compara a viabilidade de C² de cada Linha de Ação, incluindo riscos de proteção cibernética.',
-      fase5:'Consolida o banco de dados do Comando Operacional com a decisão tomada.',
-      fase6:'Elabora o Anexo de C² ao Plano Operacional.',
+      fase2:'Analisa os Fatores de Força e Fraqueza de Comando e Controle das forças em presença.',
+      fase3:'Avalia a viabilidade de apoio de C² a cada Linha de Ação elaborada.',
+      fase6:'Confecciona o Anexo de C² ao Plano Operacional.',
     }},
   { id:'d7', codigo:'D-7', nome:'Comunicação Social',
     resumo:'Planejamento e condução das ações de Comunicação Social do Comando Operacional.',
     fases:{
-      fase1:'Faz a avaliação inicial do ambiente de comunicação social relacionado à missão.',
-      fase2:'Levanta o cenário de mídia e de percepção pública relevante à situação.',
+      fase2:'Analisa a situação de Comunicação Social relevante à missão e à área de responsabilidade.',
       fase3:'Emite parecer sobre as Linhas de Ação sob a ótica da Comunicação Social.',
-      fase4:'Contribui com critérios de exposição midiática na comparação das Linhas de Ação.',
-      fase5:'Prepara procedimentos, instalações e porta-vozes conforme a decisão do Comandante.',
-      fase6:'Elabora o Anexo de Comunicação Social ao Plano Operacional.',
+      fase6:'Confecciona o Anexo de Comunicação Social ao Plano Operacional.',
     }},
   { id:'d8', codigo:'D-8', nome:'Operações de Informação',
     resumo:'Análise do ambiente informacional e condução dos planos de Operações de Informação.',
     fases:{
-      fase1:'Faz a análise inicial do ambiente informacional relacionado à missão.',
-      fase2:'Aprofunda a análise do ambiente informacional e dos aspectos políticos, culturais e sociais relevantes.',
-      fase3:'Avalia o efeito de cada Linha de Ação no ambiente informacional, em coordenação com a Guerra Cibernética.',
-      fase4:'Compara as Linhas de Ação quanto ao impacto em Operações de Informação.',
-      fase5:'Ajusta os planos de Operações de Informação à decisão do Comandante.',
-      fase6:'Elabora o Anexo de Operações de Informação ao Plano Operacional.',
+      fase2:'Analisa o ambiente informacional e as Capacidades Relacionadas à Informação pertinentes à situação.',
+      fase3:'Avalia o efeito de cada Linha de Ação no ambiente informacional.',
+      fase6:'Confecciona o Anexo de Operações de Informação ao Plano Operacional.',
     }},
   { id:'d9', codigo:'D-9', nome:'Assuntos Civis',
     resumo:'Análise das implicações civis das operações e ligação com autoridades locais.',
     fases:{
-      fase1:'Levanta os aspectos civis iniciais relevantes à área de operações.',
-      fase2:'Analisa serviços públicos e infraestruturas críticas a preservar na área de responsabilidade.',
-      fase3:'Avalia as implicações de cada Linha de Ação na esfera civil e a ligação com autoridades locais.',
-      fase4:'Compara as Linhas de Ação quanto ao impacto sobre a população e a infraestrutura civil.',
-      fase5:'Ajusta as ações de Assuntos Civis à decisão do Comandante.',
-      fase6:'Elabora o Anexo de Assuntos Civis ao Plano Operacional.',
+      fase2:'Analisa a situação de Assuntos Civis na área de responsabilidade, incluindo serviços públicos e infraestruturas críticas.',
+      fase3:'Avalia as implicações de cada Linha de Ação na esfera civil.',
+      fase6:'Confecciona o Anexo de Assuntos Civis ao Plano Operacional.',
     }},
   { id:'d10', codigo:'D-10', nome:'Administração Financeira',
-    resumo:'Assessoria orçamentária e financeira ao Comandante Operacional.',
+    resumo:'Assessoria orçamentária e financeira ao Comandante Operacional. Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
     fases:{
-      fase1:'Levanta os recursos orçamentários inicialmente disponíveis para a operação.',
-      fase2:'Presta assessoria orçamentária e financeira ao Comandante frente à situação apresentada.',
-      fase3:'Estima os custos associados a cada Linha de Ação para subsidiar o Confronto.',
-      fase4:'Compara as Linhas de Ação quanto à viabilidade orçamentária e financeira.',
-      fase5:'Programa os recursos decorrentes da decisão do Comandante.',
-      fase6:'Elabora o Anexo de Administração Financeira ao Plano Operacional.',
+      fase6:'Confecciona o Anexo de Administração Financeira ao Plano Operacional.',
     }},
 ];
 
@@ -1618,7 +1589,11 @@ function initCelulasAccordion(){
     item.className = 'accordion-item';
     item.dataset.celula = celula.id;
 
-    const faseBlocksHtml = EXAME_FASES.map(fase => {
+    const applicableFases = celula.id === 'd3' ? EXAME_FASES : EXAME_FASES.filter(fase => celula.fases[fase.id]);
+
+    const faseBlocksHtml = applicableFases.length === 0
+      ? '<p class="empty-hint">Esta seção não possui produtos vinculados às fases do Exame de Situação.</p>'
+      : applicableFases.map(fase => {
       const texto = celula.fases[fase.id];
       const textoHtml = texto ? `<p class="fase-block-text">${escapeHtml(texto)}</p>` : '';
 
@@ -1668,7 +1643,7 @@ function initCelulasAccordion(){
       item.classList.toggle('open');
     });
 
-    EXAME_FASES.forEach(fase => {
+    applicableFases.forEach(fase => {
       if (celula.id === 'd3'){
         fase.docs.forEach(doc => {
           setupDocUploadZone('exame-' + fase.id + '-' + doc.key, 'exame/' + fase.id + '/docs/' + doc.key);
@@ -1719,10 +1694,10 @@ function countExameProgress(){
           const fileList = Object.values(files);
           items.push({ celula: celula.codigo, label: doc.label, done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
         });
-      } else {
+      } else if (celula.fases[fase.id]){
         const files = (((opState.celulas[celula.id] || {}).fases || {})[fase.id] || {}).docs || {};
         const fileList = Object.values(files);
-        items.push({ celula: celula.codigo, label: celula.nome, done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
+        items.push({ celula: celula.codigo, label: celula.fases[fase.id], done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
       }
     });
     const faseDone = items.filter(i => i.done).length;
