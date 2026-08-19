@@ -387,6 +387,57 @@
   }
   .modal-box .primary-btn:hover{background:var(--gold-light);}
 
+  /* ===== Exame de Situação Operacional (accordion) ===== */
+  .accordion{display:flex; flex-direction:column; gap:10px;}
+  .accordion-item{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .accordion-header{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    background:none;
+    border:none;
+    color:var(--text);
+    font-weight:600;
+    font-size:.95rem;
+    letter-spacing:.02em;
+    cursor:pointer;
+  }
+  .accordion-header:hover{background:var(--panel2);}
+  .accordion-header .chevron{
+    color:var(--gold);
+    font-size:.8rem;
+    transition:transform .2s;
+  }
+  .accordion-item.open .accordion-header{border-bottom:1px solid var(--border);}
+  .accordion-item.open .accordion-header .chevron{transform:rotate(180deg);}
+  .accordion-body{display:none; padding:16px;}
+  .accordion-item.open .accordion-body{display:block;}
+
+  .doc-group{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .doc-group:last-child{margin-bottom:0;}
+  .doc-group h4{
+    font-size:.86rem;
+    font-weight:600;
+    color:var(--gold-light);
+    letter-spacing:.02em;
+    margin-bottom:10px;
+  }
+  .doc-group .pdf-upload-zone{padding:16px; font-size:.85rem; margin-bottom:12px;}
+  .doc-group .pdf-list{gap:8px;}
+
   #pdf-viewer-overlay .modal-box{max-width:900px;}
   #pdf-viewer-pages{
     max-height:70vh;
@@ -402,6 +453,10 @@
   #pdf-viewer-pages canvas{max-width:100%; box-shadow:0 2px 10px rgba(0,0,0,.5);}
   #pdf-viewer-title{font-size:.95rem; color:var(--text-dim); margin-bottom:10px; word-break:break-word;}
 
+  #image-viewer-overlay .modal-box{max-width:700px;}
+  #image-viewer-title{font-size:.95rem; color:var(--text-dim); margin-bottom:10px; word-break:break-word;}
+  #image-viewer-img{max-width:100%; display:block; margin:0 auto; border-radius:8px;}
+
   .sync-badge{
     position:fixed; bottom:12px; right:14px;
     font-size:.72rem;
@@ -415,6 +470,45 @@
   }
   .sync-dot{width:8px;height:8px;border-radius:50%;background:#555;}
   .sync-badge.online .sync-dot{background:var(--success-light);}
+
+  .update-banner{
+    position:fixed;
+    left:50%;
+    bottom:-80px;
+    transform:translateX(-50%);
+    z-index:70;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--panel2);
+    border:1px solid var(--gold);
+    border-radius:12px;
+    padding:12px 16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+    transition:bottom .25s ease;
+  }
+  .update-banner.show{bottom:16px;}
+  .update-banner span{font-size:.88rem; color:var(--text);}
+  .update-banner button{
+    background:var(--gold);
+    color:#1a1a1a;
+    border:none;
+    padding:8px 16px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:.85rem;
+    cursor:pointer;
+    flex:none;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .update-banner button:hover{background:var(--gold-light);}
+  .update-banner button svg{width:15px;height:15px;}
+  @media (max-width:520px){
+    .update-banner{left:12px; right:12px; transform:none; width:auto;}
+    .update-banner.show{bottom:12px;}
+  }
 
   @media (max-width: 760px){
     .topbar{padding:14px 74px 6px;}
@@ -440,6 +534,7 @@
         <button data-op="hefesto">Op HEFESTO</button>
         <button data-op="spartacus">Op SPARTACUS</button>
         <button data-op="azuver">AZUVER</button>
+        <button data-op="epeo">EPEO</button>
       </div>
     </div>
   </div>
@@ -459,17 +554,17 @@
 
 <div class="app-body">
   <nav class="sidebar">
-    <button class="tab-btn active" data-tab="em">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Funções do EM
-    </button>
     <button class="tab-btn" data-tab="faltas">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
       Controle de Faltas
     </button>
+    <button class="tab-btn active" data-tab="em">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Funções do EM
+    </button>
     <button class="tab-btn" data-tab="tps">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
-      TPs
+      Trabalhos Pedidos
     </button>
     <button class="tab-btn" data-tab="manuais">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -478,14 +573,6 @@
   </nav>
 
   <main class="content">
-
-    <section id="tab-em" class="tab-panel active">
-      <div class="panel-card">
-        <h2>Funções do EM</h2>
-        <div id="em-rows"></div>
-        <button class="add-btn" id="em-add">+ Adicionar integrante</button>
-      </div>
-    </section>
 
     <section id="tab-faltas" class="tab-panel">
       <div class="panel-card">
@@ -496,6 +583,14 @@
         </div>
         <div id="faltas-rows"></div>
         <button class="add-btn" id="faltas-add">+ Adicionar nome</button>
+      </div>
+    </section>
+
+    <section id="tab-em" class="tab-panel active">
+      <div class="panel-card">
+        <h2>Funções do EM</h2>
+        <div id="em-rows"></div>
+        <button class="add-btn" id="em-add">+ Adicionar integrante</button>
       </div>
     </section>
 
@@ -518,6 +613,11 @@
           <div class="pdf-list" id="tps-prontos-list"></div>
         </div>
       </div>
+
+      <div class="panel-card">
+        <h2>Exame de Situação Operacional</h2>
+        <div class="accordion" id="exame-accordion"></div>
+      </div>
     </section>
 
     <section id="tab-manuais" class="tab-panel">
@@ -535,6 +635,14 @@
 </div>
 
 <div class="sync-badge" id="sync-badge"><span class="sync-dot"></span><span id="sync-label">conectando…</span></div>
+
+<div class="update-banner" id="update-banner">
+  <span>Nova versão do app disponível</span>
+  <button id="update-btn" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    Atualizar
+  </button>
+</div>
 
 <!-- TEMA modal -->
 <div class="modal-overlay" id="tema-modal">
@@ -570,14 +678,62 @@
   </div>
 </div>
 
+<!-- Image viewer modal -->
+<div class="modal-overlay" id="image-viewer-overlay">
+  <div class="modal-box">
+    <button class="modal-close" data-close="image-viewer-overlay">&times;</button>
+    <h3>Visualizar imagem</h3>
+    <div id="image-viewer-title"></div>
+    <img id="image-viewer-img" alt="">
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+/* ============ Atualização do app (PWA) ============ */
+let waitingWorker = null;
+
+function showUpdateBanner(worker){
+  waitingWorker = worker;
+  $('#update-banner').classList.add('show');
 }
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      if (reg.waiting && reg.active) showUpdateBanner(reg.waiting);
+
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showUpdateBanner(newWorker);
+          }
+        });
+      });
+
+      setInterval(() => reg.update().catch(()=>{}), 60 * 1000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') reg.update().catch(()=>{});
+      });
+    }).catch(()=>{});
+  });
+
+  let reloadingForUpdate = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloadingForUpdate) return;
+    reloadingForUpdate = true;
+    window.location.reload();
+  });
+}
+
+$('#update-btn').addEventListener('click', () => {
+  if (waitingWorker) waitingWorker.postMessage({type:'SKIP_WAITING'});
+});
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
@@ -598,13 +754,14 @@ const OPS = [
   {id:'hefesto',   label:'Op HEFESTO',   icon:'assets/op-hefesto-icon.png'},
   {id:'spartacus', label:'Op SPARTACUS', icon:'assets/op-spartacus-icon.png'},
   {id:'azuver',    label:'AZUVER',       icon:'assets/op-azuver-icon.png'},
+  {id:'epeo',      label:'EPEO',         icon:'assets/eceme-icon.png'},
 ];
 
 let currentOp = localStorage.getItem('eceme_current_op') || 'hefesto';
 if (!OPS.find(o => o.id === currentOp)) currentOp = 'hefesto';
 
 let activeRefs = [];
-let opState = { em:{}, faltas:{data:'', pessoas:{}}, tema:null, kmzLink:'', tps:{}, 'tps-prontos':{}, manuais:{} };
+let opState = { em:{}, faltas:{data:'', pessoas:{}}, tema:null, kmzLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{} };
 
 function $(sel, root=document){ return root.querySelector(sel); }
 function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
@@ -695,6 +852,10 @@ function attachListeners(){
   const manuaisCb = snap => { opState.manuais = snap.val() || {}; renderPdfList('manuais'); };
   base.child('manuais').on('value', manuaisCb);
   activeRefs.push({ref: base.child('manuais'), cb: manuaisCb});
+
+  const exameCb = snap => { opState.exame = snap.val() || {}; renderExame(); };
+  base.child('exame').on('value', exameCb);
+  activeRefs.push({ref: base.child('exame'), cb: exameCb});
 }
 
 function opRef(path){ return db.ref('operations/' + currentOp + '/' + path); }
@@ -937,6 +1098,172 @@ function renderPdfList(kind){
       if (confirm('Remover este arquivo para todos os usuários?')){
         opRef(kind + '/' + btn.dataset.remove).remove();
       }
+    });
+  });
+}
+
+/* ============ Exame de Situação Operacional ============ */
+const EXAME_FASES = [
+  { id:'fase1', label:'Fase 1', docs:[
+    {key:'diagrama-relacoes-atual',            label:'Diagrama de Relações da Situação Atual'},
+    {key:'diagrama-situacao-desejada',          label:'Diagrama da Situação Desejada'},
+    {key:'estado-final-desejado-operacional',   label:'Estado Final Desejado Operacional'},
+    {key:'problema',                            label:'Problema'},
+    {key:'objetivos-operacionais',              label:'Objetivos Operacionais'},
+  ]},
+  { id:'fase2', label:'Fase 2', docs:[] },
+  { id:'fase3', label:'Fase 3', docs:[] },
+  { id:'fase4', label:'Fase 4', docs:[] },
+  { id:'fase5', label:'Fase 5', docs:[] },
+  { id:'fase6', label:'Fase 6', docs:[] },
+];
+
+const DOC_EXTENSIONS = ['pdf','jpg','jpeg','png','gif','webp','doc','docx','ppt','pptx'];
+const DOC_ACCEPT = '.pdf,.jpg,.jpeg,.png,.gif,.webp,.doc,.docx,.ppt,.pptx';
+const IMAGE_EXTENSIONS = ['jpg','jpeg','png','gif','webp'];
+
+function getExt(name){
+  const m = /\.([a-z0-9]+)$/i.exec(name || '');
+  return m ? m[1].toLowerCase() : '';
+}
+
+async function uploadDocsTo(refPath, fileList){
+  for (const file of Array.from(fileList)){
+    if (!DOC_EXTENSIONS.includes(getExt(file.name))) continue;
+    const dataUrl = await readFileAsDataURL(file);
+    const key = uid();
+    await db.ref('operations/' + currentOp + '/' + refPath + '/' + key).set({
+      fileName: file.name,
+      size: file.size,
+      fileData: dataUrl,
+      uploadedAt: Date.now()
+    });
+  }
+}
+
+function openImageViewer(dataUrl, title){
+  $('#image-viewer-title').textContent = title || '';
+  $('#image-viewer-img').src = dataUrl;
+  $('#image-viewer-img').alt = title || '';
+  openModal('image-viewer-overlay');
+}
+
+function openDocFile(file){
+  const ext = getExt(file.fileName);
+  if (ext === 'pdf'){ openPdfViewer(file.fileData, file.fileName); return; }
+  if (IMAGE_EXTENSIONS.includes(ext)){ openImageViewer(file.fileData, file.fileName); return; }
+}
+
+function renderDocList(containerEl, files, refPath){
+  const entries = Object.entries(files || {}).sort((a,b) => (a[1].uploadedAt||0)-(b[1].uploadedAt||0));
+  if (entries.length === 0){
+    containerEl.innerHTML = '<div class="empty-hint">Nenhum arquivo adicionado ainda.</div>';
+    return;
+  }
+  containerEl.innerHTML = '';
+  entries.forEach(([key, file]) => {
+    const ext = getExt(file.fileName);
+    const previewable = ext === 'pdf' || IMAGE_EXTENSIONS.includes(ext);
+    const card = document.createElement('div');
+    card.className = 'pdf-card';
+    card.innerHTML = `
+      <svg class="pdf-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      <div class="pdf-info">
+        <div class="pdf-name">${escapeHtml(file.fileName||'documento')}</div>
+        <div class="pdf-meta">${formatBytes(file.size)}</div>
+      </div>
+      <div class="pdf-actions">
+        ${previewable ? `<button data-open="${key}">Abrir</button>` : ''}
+        <button data-download="${key}">Baixar</button>
+        <button class="remove-btn" data-remove="${key}">Remover</button>
+      </div>
+    `;
+    containerEl.appendChild(card);
+  });
+  $all('[data-open]', containerEl).forEach(btn => {
+    btn.addEventListener('click', () => openDocFile(files[btn.dataset.open]));
+  });
+  $all('[data-download]', containerEl).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const file = files[btn.dataset.download];
+      downloadDataUrl(file.fileData, file.fileName);
+    });
+  });
+  $all('[data-remove]', containerEl).forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (confirm('Remover este arquivo para todos os usuários?')){
+        db.ref('operations/' + currentOp + '/' + refPath + '/' + btn.dataset.remove).remove();
+      }
+    });
+  });
+}
+
+function setupDocUploadZone(idSlug, refPath){
+  const zone = $('#' + idSlug + '-zone');
+  const input = $('#' + idSlug + '-input');
+  zone.addEventListener('click', () => input.click());
+  input.addEventListener('change', async () => {
+    await uploadDocsTo(refPath, input.files);
+    input.value = '';
+  });
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--gold)'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+  zone.addEventListener('drop', async e => {
+    e.preventDefault();
+    zone.style.borderColor = '';
+    await uploadDocsTo(refPath, e.dataTransfer.files);
+  });
+}
+
+function initExameAccordion(){
+  const container = $('#exame-accordion');
+  container.innerHTML = '';
+  EXAME_FASES.forEach(fase => {
+    const item = document.createElement('div');
+    item.className = 'accordion-item';
+    item.dataset.fase = fase.id;
+
+    const body = fase.docs.length === 0
+      ? '<div class="empty-hint">Conteúdo desta fase será definido em breve.</div>'
+      : fase.docs.map(doc => `
+        <div class="doc-group" data-doc-key="${doc.key}">
+          <h4>${escapeHtml(doc.label)}</h4>
+          <div class="pdf-upload-zone" id="exame-${fase.id}-${doc.key}-zone">
+            Clique aqui ou arraste um arquivo (PDF, imagem, Word ou PowerPoint)
+            <input type="file" id="exame-${fase.id}-${doc.key}-input" accept="${DOC_ACCEPT}" multiple style="display:none">
+          </div>
+          <div class="pdf-list" id="exame-${fase.id}-${doc.key}-list"></div>
+        </div>
+      `).join('');
+
+    item.innerHTML = `
+      <button class="accordion-header" type="button">
+        <span>${escapeHtml(fase.label)}</span>
+        <span class="chevron">&#9660;</span>
+      </button>
+      <div class="accordion-body">${body}</div>
+    `;
+    container.appendChild(item);
+
+    item.querySelector('.accordion-header').addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+
+    fase.docs.forEach(doc => {
+      setupDocUploadZone('exame-' + fase.id + '-' + doc.key, 'exame/' + fase.id + '/docs/' + doc.key);
+    });
+  });
+}
+initExameAccordion();
+
+function renderExame(){
+  EXAME_FASES.forEach(fase => {
+    fase.docs.forEach(doc => {
+      const listEl = $('#exame-' + fase.id + '-' + doc.key + '-list');
+      if (!listEl) return;
+      const faseState = opState.exame[fase.id] || {};
+      const files = (faseState.docs || {})[doc.key] || {};
+      renderDocList(listEl, files, 'exame/' + fase.id + '/docs/' + doc.key);
     });
   });
 }
