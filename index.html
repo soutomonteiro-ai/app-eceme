@@ -1414,22 +1414,22 @@ function renderPdfList(kind){
 /* ============ Exame de Situação Operacional ============ */
 const EXAME_FASES = [
   { id:'fase1', label:'Fase 1 — Avaliação do Ambiente Operacional e Análise da Missão', docs:[
-    {key:'diagrama-relacoes-atual',            label:'Diagrama de Relações da Situação Atual'},
-    {key:'diagrama-situacao-desejada',          label:'Diagrama da Situação Desejada'},
-    {key:'estado-final-desejado-operacional',   label:'Estado Final Desejado Operacional'},
-    {key:'problema',                            label:'Problema'},
-    {key:'objetivos-operacionais',              label:'Objetivos Operacionais'},
+    {key:'diagrama-relacoes-atual',            label:'Diagrama de Relações da Situação Atual', owner:'d5'},
+    {key:'diagrama-situacao-desejada',          label:'Diagrama da Situação Desejada', owner:'d5'},
+    {key:'estado-final-desejado-operacional',   label:'Estado Final Desejado Operacional', owner:'d5'},
+    {key:'problema',                            label:'Problema', owner:'d5'},
+    {key:'objetivos-operacionais',              label:'Objetivos Operacionais', owner:'d5'},
     {key:'diplan',                               label:'Diplan'},
   ]},
   { id:'fase2', label:'Fase 2 — A Situação e sua Compreensão', docs:[
-    {key:'caracteristicas-area-responsabilidade', label:'Características da Área de Responsabilidade'},
-    {key:'forcas-inimigas',                       label:'Forças Inimigas'},
+    {key:'caracteristicas-area-responsabilidade', label:'Características da Área de Responsabilidade', owner:'d2'},
+    {key:'forcas-inimigas',                       label:'Forças Inimigas', owner:'d2'},
     {key:'nossas-forcas',                         label:'Nossas Forças'},
     {key:'comparacao-poderes-combate',            label:'Comparação de Poderes de Combate (CPC)'},
     {key:'fatores-forca-fraqueza',                label:'Fatores de Força e Fraqueza (FFF)'},
-    {key:'abordagem-operacional',                 label:'Abordagem Operacional (Desenho Operacional)'},
+    {key:'abordagem-operacional',                 label:'Abordagem Operacional (Desenho Operacional)', owner:'d5'},
     {key:'intencao-comandante',                   label:'Intenção do Comandante'},
-    {key:'necessidades-inteligencia',             label:'Necessidades de Inteligência'},
+    {key:'necessidades-inteligencia',             label:'Necessidades de Inteligência', owner:'d2'},
     {key:'adequacao-propria-forca',               label:'Determinação Inicial da Adequação da Própria Força'},
   ]},
   { id:'fase3', label:'Fase 3 — Possibilidade(s) do Inimigo, Linhas de Ação e Confronto', docs:[
@@ -1448,6 +1448,8 @@ const EXAME_FASES = [
   ]},
 ];
 
+function docOwner(doc){ return doc.owner || 'd3'; }
+
 const CELULAS = [
   { id:'d1', codigo:'D-1', nome:'Pessoal',
     resumo:'Gestão e controle dos efetivos das forças componentes; coordenação dos pedidos de recompletamento de pessoal e estimativa de perdas em combate; medidas para manter o moral; disciplina e justiça militar; boletins, ordens e histórico de pessoal; mão de obra civil (coord. D-2, D-4 e D-9); e evacuação, sepultamento e emissão de certidões de óbito. Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
@@ -1458,7 +1460,7 @@ const CELULAS = [
     resumo:'Coordenação da produção de informações e conhecimentos para apoio à decisão do Comandante; proposição das Necessidades de Inteligência (NI) em todas as fases da operação; avaliação de danos aos sistemas de alvos; supervisão da contrainteligência; arquitetura da rede de Inteligência (coord. D-6); e meteorologia e oceanografia (METOC).',
     fases:{
       fase2:'Mantém atualizada a Ordem de Batalha do inimigo e o mapa de situação, e elabora as Análises de Inteligência e de Contrainteligência.',
-      fase3:'Levanta as Possibilidades do Inimigo (Psb Ini), identificando vulnerabilidades e ameaças, e colabora com as Seções de Operações e de Planejamento na elaboração da Lista Integrada de Alvos (LIA).',
+      fase3:'Levanta as Possibilidades do Inimigo (Psb Ini), identificando vulnerabilidades e ameaças prováveis para a operação.',
       fase6:'Confecciona o Anexo de Inteligência e seus apêndices ao Plano Operacional.',
     }},
   { id:'d3', codigo:'D-3', nome:'Operações',
@@ -1612,7 +1614,7 @@ function initCelulasAccordion(){
     item.className = 'accordion-item';
     item.dataset.celula = celula.id;
 
-    const applicableFases = celula.id === 'd3' ? EXAME_FASES : EXAME_FASES.filter(fase => celula.fases[fase.id]);
+    const applicableFases = EXAME_FASES.filter(fase => celula.fases[fase.id] || fase.docs.some(doc => docOwner(doc) === celula.id));
 
     const faseBlocksHtml = applicableFases.length === 0
       ? '<p class="empty-hint">Esta seção não possui produtos vinculados às fases do Exame de Situação.</p>'
@@ -1620,8 +1622,7 @@ function initCelulasAccordion(){
       const texto = celula.fases[fase.id];
       const textoHtml = texto ? `<p class="fase-block-text">${escapeHtml(texto)}</p>` : '';
 
-      const docsHtml = celula.id === 'd3'
-        ? fase.docs.map(doc => `
+      const ownedDocsHtml = fase.docs.filter(doc => docOwner(doc) === celula.id).map(doc => `
             <div class="fase-doc-item">
               <h5>${escapeHtml(doc.label)}</h5>
               <div class="pdf-upload-zone" id="exame-${fase.id}-${doc.key}-zone">
@@ -1630,8 +1631,9 @@ function initCelulasAccordion(){
               </div>
               <div class="pdf-list" id="exame-${fase.id}-${doc.key}-list"></div>
             </div>
-          `).join('')
-        : `
+          `).join('');
+
+      const genericHtml = (celula.id !== 'd3' && celula.fases[fase.id]) ? `
             <div class="fase-doc-item">
               <div class="pdf-upload-zone" id="celula-${celula.id}-${fase.id}-zone">
                 Clique aqui ou arraste o produto desta fase (PDF, imagem, Word ou PowerPoint)
@@ -1639,13 +1641,14 @@ function initCelulasAccordion(){
               </div>
               <div class="pdf-list" id="celula-${celula.id}-${fase.id}-list"></div>
             </div>
-          `;
+          ` : '';
 
       return `
         <div class="fase-block" data-fase="${fase.id}">
           <div class="fase-block-title">${escapeHtml(fase.label)}</div>
           ${textoHtml}
-          ${docsHtml}
+          ${ownedDocsHtml}
+          ${genericHtml}
         </div>
       `;
     }).join('');
@@ -1667,11 +1670,10 @@ function initCelulasAccordion(){
     });
 
     applicableFases.forEach(fase => {
-      if (celula.id === 'd3'){
-        fase.docs.forEach(doc => {
-          setupDocUploadZone('exame-' + fase.id + '-' + doc.key, 'exame/' + fase.id + '/docs/' + doc.key);
-        });
-      } else {
+      fase.docs.filter(doc => docOwner(doc) === celula.id).forEach(doc => {
+        setupDocUploadZone('exame-' + fase.id + '-' + doc.key, 'exame/' + fase.id + '/docs/' + doc.key);
+      });
+      if (celula.id !== 'd3' && celula.fases[fase.id]){
         setupDocUploadZone('celula-' + celula.id + '-' + fase.id, 'celulas/' + celula.id + '/fases/' + fase.id + '/docs');
       }
     });
@@ -1711,13 +1713,12 @@ function countExameProgress(){
   const perFase = EXAME_FASES.map(fase => {
     const items = [];
     CELULAS.forEach(celula => {
-      if (celula.id === 'd3'){
-        fase.docs.forEach(doc => {
-          const files = ((opState.exame[fase.id] || {}).docs || {})[doc.key] || {};
-          const fileList = Object.values(files);
-          items.push({ celula: celula.codigo, label: doc.label, done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
-        });
-      } else if (celula.fases[fase.id]){
+      fase.docs.filter(doc => docOwner(doc) === celula.id).forEach(doc => {
+        const files = ((opState.exame[fase.id] || {}).docs || {})[doc.key] || {};
+        const fileList = Object.values(files);
+        items.push({ celula: celula.codigo, label: doc.label, done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
+      });
+      if (celula.id !== 'd3' && celula.fases[fase.id]){
         const files = (((opState.celulas[celula.id] || {}).fases || {})[fase.id] || {}).docs || {};
         const fileList = Object.values(files);
         items.push({ celula: celula.codigo, label: celula.fases[fase.id], done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
