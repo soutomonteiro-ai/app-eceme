@@ -275,7 +275,14 @@
     font-size:.92rem;
     color-scheme:dark;
   }
-  .presence-row{display:flex; align-items:center; gap:14px; margin-bottom:10px; flex-wrap:wrap;}
+  .presence-row{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:10px;
+  }
+  .presence-row-top{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:10px;}
   .presence-row input[type=text]{
     background:var(--bg-alt);
     border:1px solid var(--border);
@@ -294,9 +301,9 @@
     color-scheme:dark;
   }
   .presence-row .data-input{flex:0 0 150px;}
-  .presence-row .nome-input{flex:2; min-width:160px;}
-  .presence-row .funcao-input{flex:1; min-width:130px;}
-  .presence-row .motivo-input{flex:1.5; min-width:160px;}
+  .presence-row .nome-input{flex:1 1 200px; min-width:160px; max-width:280px;}
+  .presence-row .funcao-input{flex:1 1 140px; min-width:130px; max-width:200px;}
+  .presence-row .motivo-input{width:100%;}
   .dot-option{
     display:flex; align-items:center; gap:6px;
     cursor:pointer;
@@ -1164,13 +1171,15 @@ function renderFaltas(){
       row.className = 'presence-row';
       row.dataset.rowKey = key;
       row.innerHTML = `
-        <input type="date" class="data-input" data-field="data">
-        <input type="text" class="nome-input" placeholder="Nome" data-field="nome">
-        <input type="text" class="funcao-input" placeholder="Função" data-field="funcao">
-        <div class="dot-option present" data-status="presente"><span class="dot"></span> Estarei presente</div>
-        <div class="dot-option absent" data-status="ausente"><span class="dot"></span> Não irei</div>
-        <input type="text" class="motivo-input" placeholder="Motivo da falta" data-field="motivo">
-        <button class="icon-btn" title="Remover">&times;</button>
+        <div class="presence-row-top">
+          <input type="date" class="data-input" data-field="data">
+          <input type="text" class="nome-input" placeholder="Nome" data-field="nome">
+          <input type="text" class="funcao-input" placeholder="Função" data-field="funcao">
+          <div class="dot-option present" data-status="presente"><span class="dot"></span> Estarei presente</div>
+          <div class="dot-option absent" data-status="ausente"><span class="dot"></span> Não irei</div>
+          <button class="icon-btn" title="Remover">&times;</button>
+        </div>
+        <input type="text" class="motivo-input" placeholder="Motivo da falta e tempos de instrução" data-field="motivo">
       `;
       container.appendChild(row);
       const dataInput = row.querySelector('[data-field="data"]');
