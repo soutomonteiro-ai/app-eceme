@@ -278,11 +278,14 @@
   .presence-row{
     background:var(--panel2);
     border:1px solid var(--border);
+    border-left:3px solid var(--border);
     border-radius:10px;
-    padding:12px 14px;
+    padding:12px 16px;
     margin-bottom:10px;
+    transition:border-left-color .15s;
   }
-  .presence-row-top{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:10px;}
+  .presence-row.is-ausente{border-left-color:var(--danger-light);}
+  .presence-row-top{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px;}
   .presence-row input[type=text]{
     background:var(--bg-alt);
     border:1px solid var(--border);
@@ -304,23 +307,38 @@
   .presence-row .nome-input{flex:1 1 200px; min-width:160px; max-width:280px;}
   .presence-row .funcao-input{flex:1 1 140px; min-width:130px; max-width:200px;}
   .presence-row .motivo-input{width:100%;}
-  .dot-option{
-    display:flex; align-items:center; gap:6px;
+  .ausente-toggle{
+    display:flex; align-items:center; gap:10px;
     cursor:pointer;
-    padding:6px 10px;
-    border-radius:20px;
-    border:1px solid transparent;
-    font-size:.82rem;
-    color:var(--text-dim);
+    user-select:none;
     flex:none;
+    padding:6px 12px 6px 6px;
+    border-radius:20px;
+    transition:background .15s;
   }
-  .dot{width:16px;height:16px;border-radius:50%;border:2px solid #555; flex:none;}
-  .dot-option.present .dot{border-color:var(--success-light);}
-  .dot-option.absent .dot{border-color:var(--danger-light);}
-  .dot-option.present.selected{background:rgba(63,125,67,.18); border-color:var(--success-light); color:var(--success-light);}
-  .dot-option.present.selected .dot{background:var(--success-light);}
-  .dot-option.absent.selected{background:rgba(179,56,44,.18); border-color:var(--danger-light); color:var(--danger-light);}
-  .dot-option.absent.selected .dot{background:var(--danger-light);}
+  .ausente-toggle:hover{background:rgba(255,255,255,.04);}
+  .ausente-toggle input{display:none;}
+  .toggle-track{
+    width:38px; height:22px;
+    border-radius:20px;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    position:relative;
+    flex:none;
+    transition:background .15s, border-color .15s;
+  }
+  .toggle-thumb{
+    position:absolute;
+    top:2px; left:2px;
+    width:16px; height:16px;
+    border-radius:50%;
+    background:var(--text-dim);
+    transition:transform .15s, background .15s;
+  }
+  .ausente-toggle input:checked + .toggle-track{background:rgba(179,56,44,.22); border-color:var(--danger-light);}
+  .ausente-toggle input:checked + .toggle-track .toggle-thumb{transform:translateX(16px); background:var(--danger-light);}
+  .toggle-label{font-size:.85rem; color:var(--text-dim); font-weight:600; letter-spacing:.01em;}
+  .ausente-toggle input:checked ~ .toggle-label{color:var(--danger-light);}
 
   /* ===== Relatório de faltas ===== */
   .relatorio-list{display:flex; flex-direction:column; gap:10px; margin-top:4px;}
@@ -517,17 +535,29 @@
     color:var(--text-dim);
     margin-top:4px;
   }
-  .progress-row{margin-bottom:14px;}
+  .progress-row{
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:border-color .15s;
+  }
+  .progress-row:hover{border-color:var(--gold);}
   .progress-row:last-child{margin-bottom:0;}
   .progress-row-head{
     display:flex;
     justify-content:space-between;
-    align-items:baseline;
-    margin-bottom:6px;
+    align-items:center;
+    gap:10px;
+    margin-bottom:8px;
     font-size:.88rem;
   }
-  .progress-row-head .fase-label{color:var(--text); font-weight:600;}
-  .progress-row-head .fase-count{color:var(--text-dim); font-size:.8rem;}
+  .progress-row-head .fase-label{color:var(--text); font-weight:600; display:flex; align-items:center; gap:8px;}
+  .progress-row-head .fase-label .chevron{color:var(--gold); font-size:.75rem; transition:transform .2s; flex:none;}
+  .progress-row.open .fase-label .chevron{transform:rotate(180deg);}
+  .progress-row-head .fase-count{color:var(--text-dim); font-size:.8rem; flex:none;}
   .progress-track{
     height:8px;
     border-radius:4px;
@@ -542,61 +572,86 @@
     transition:width .3s ease;
   }
   .progress-fill.complete{background:linear-gradient(90deg, var(--success), var(--success-light));}
+  .fase-detail{display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);}
+  .progress-row.open .fase-detail{display:flex; flex-direction:column; gap:6px;}
+  .fase-detail-item{
+    display:flex; align-items:center; gap:10px;
+    font-size:.8rem;
+    padding:6px 8px;
+    border-radius:6px;
+    background:var(--bg-alt);
+  }
+  .fase-detail-item .fase-detail-celula{
+    flex:none;
+    font-weight:700;
+    color:var(--gold-light);
+    min-width:34px;
+  }
+  .fase-detail-item .fase-detail-label{flex:1; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .fase-detail-item .fase-detail-status{flex:none; font-weight:600;}
+  .fase-detail-item.done .fase-detail-status{color:var(--success-light);}
+  .fase-detail-item.pending .fase-detail-status{color:var(--text-dim);}
 
   /* ===== Células do EMCj ===== */
   .celulas-intro{color:var(--text-dim); font-size:.85rem; margin-bottom:16px;}
-  .celula-atribuicoes{
-    list-style:none;
-    padding:0;
-    margin:0 0 16px;
-  }
-  .celula-atribuicoes li{
-    position:relative;
-    padding-left:16px;
-    margin-bottom:6px;
-    font-size:.88rem;
-    color:var(--text-dim);
-    line-height:1.4;
-  }
-  .celula-atribuicoes li::before{
-    content:'';
-    position:absolute;
-    left:0; top:.55em;
-    width:5px; height:5px;
-    border-radius:50%;
+  .celula-code-badge{
+    display:inline-block;
     background:var(--gold);
+    color:#1a1a1a;
+    font-weight:800;
+    font-size:.76rem;
+    padding:3px 9px;
+    border-radius:6px;
+    margin-right:10px;
+    letter-spacing:.02em;
+    vertical-align:middle;
   }
-  .celula-produtos-label{
-    font-size:.86rem;
-    font-weight:600;
+  .celula-resumo{
+    color:var(--text-dim);
+    font-size:.87rem;
+    line-height:1.55;
+    padding:12px 14px;
+    background:var(--panel);
+    border-left:3px solid var(--gold);
+    border-radius:0 8px 8px 0;
+    margin-bottom:18px;
+  }
+  .celula-fases{display:flex; flex-direction:column; gap:12px;}
+  .fase-block{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+  }
+  .fase-block-title{
+    font-size:.83rem;
+    font-weight:700;
     color:var(--gold-light);
     letter-spacing:.02em;
     margin-bottom:8px;
   }
-  textarea.produtos-textarea{
-    width:100%;
-    min-height:90px;
-    background:var(--bg-alt);
+  .fase-block-text{
+    font-size:.85rem;
+    color:var(--text-dim);
+    line-height:1.5;
+    margin:0 0 12px;
+  }
+  .fase-doc-item{
+    background:var(--panel2);
     border:1px solid var(--border);
-    color:var(--text);
-    padding:10px 12px;
     border-radius:8px;
-    font-size:.9rem;
-    font-family:inherit;
-    resize:vertical;
-    margin-bottom:16px;
+    padding:12px;
+    margin-bottom:10px;
   }
-  textarea.produtos-textarea:focus{outline:none; border-color:var(--gold);}
-  .celula-exame-nested{
-    border-top:1px solid var(--border);
-    padding-top:16px;
-    margin-top:4px;
+  .fase-doc-item:last-child{margin-bottom:0;}
+  .fase-doc-item h5{
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--text);
+    margin-bottom:8px;
   }
-  .celula-exame-nested h4{
-    font-size:.9rem;
-    color:var(--gold-light);
-    margin-bottom:12px;
-  }
+  .fase-doc-item .pdf-upload-zone{padding:14px; font-size:.8rem; margin-bottom:8px;}
+  .fase-doc-item .pdf-list{gap:8px;}
 
   #pdf-viewer-overlay .modal-box{max-width:900px;}
   #pdf-viewer-pages{
@@ -756,6 +811,7 @@
       </div>
       <div class="panel-card">
         <h2>Exame de Situação Operacional &mdash; por fase</h2>
+        <p class="celulas-intro">Progresso de todas as células do EMCj em cada fase do PPC. Clique numa fase para ver o que já foi enviado.</p>
         <div id="dashboard-fases"></div>
       </div>
     </section>
@@ -800,7 +856,7 @@
     <section id="tab-celulas" class="tab-panel">
       <div class="panel-card">
         <h2>Estado-Maior Conjunto &mdash; Células</h2>
-        <p class="celulas-intro">Atribuições de cada seção do EMCj e espaço para os chefes registrarem seus principais produtos. A Seção de Operações (D-3) reúne, ainda, os documentos do Exame de Situação Operacional.</p>
+        <p class="celulas-intro">Contribuição de cada seção do EMCj em cada fase do PPC, com espaço para os chefes anexarem seus produtos. A Seção de Operações (D-3) reúne os documentos nomeados do Exame de Situação Operacional; as demais seções anexam seu produto de cada fase. O progresso alimenta automaticamente o painel da aba Início.</p>
         <div class="accordion" id="celulas-accordion"></div>
       </div>
     </section>
@@ -1175,8 +1231,11 @@ function renderFaltas(){
           <input type="date" class="data-input" data-field="data">
           <input type="text" class="nome-input" placeholder="Nome" data-field="nome">
           <input type="text" class="funcao-input" placeholder="Função" data-field="funcao">
-          <div class="dot-option present" data-status="presente"><span class="dot"></span> Estarei presente</div>
-          <div class="dot-option absent" data-status="ausente"><span class="dot"></span> Não irei</div>
+          <label class="ausente-toggle">
+            <input type="checkbox" data-field="ausente-toggle">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Vai faltar</span>
+          </label>
           <button class="icon-btn" title="Remover">&times;</button>
         </div>
         <input type="text" class="motivo-input" placeholder="Motivo da falta e tempos de instrução" data-field="motivo">
@@ -1186,29 +1245,27 @@ function renderFaltas(){
       const nomeInput = row.querySelector('[data-field="nome"]');
       const funcaoInput = row.querySelector('[data-field="funcao"]');
       const motivoInput = row.querySelector('[data-field="motivo"]');
+      const ausenteToggle = row.querySelector('[data-field="ausente-toggle"]');
       dataInput.addEventListener('change', () => opRef('faltas/pessoas/' + key + '/data').set(dataInput.value));
       nomeInput.addEventListener('input', debounce(() => opRef('faltas/pessoas/' + key + '/nome').set(nomeInput.value), 400));
       funcaoInput.addEventListener('input', debounce(() => opRef('faltas/pessoas/' + key + '/funcao').set(funcaoInput.value), 400));
       motivoInput.addEventListener('input', debounce(() => opRef('faltas/pessoas/' + key + '/motivo').set(motivoInput.value), 400));
       row.querySelector('.icon-btn').addEventListener('click', () => opRef('faltas/pessoas/' + key).remove());
-      $all('.dot-option', row).forEach(el => {
-        el.addEventListener('click', () => {
-          const current = (opState.faltas.pessoas[key] || {}).status;
-          const newStatus = current === el.dataset.status ? null : el.dataset.status;
-          opRef('faltas/pessoas/' + key + '/status').set(newStatus);
-        });
+      ausenteToggle.addEventListener('change', () => {
+        opRef('faltas/pessoas/' + key + '/status').set(ausenteToggle.checked ? 'ausente' : null);
       });
     }
     const dataInput = row.querySelector('[data-field="data"]');
     const nomeInput = row.querySelector('[data-field="nome"]');
     const funcaoInput = row.querySelector('[data-field="funcao"]');
     const motivoInput = row.querySelector('[data-field="motivo"]');
+    const ausenteToggle = row.querySelector('[data-field="ausente-toggle"]');
     if (document.activeElement !== dataInput && dataInput.value !== (p.data||'')) dataInput.value = p.data||'';
     if (document.activeElement !== nomeInput && nomeInput.value !== (p.nome||'')) nomeInput.value = p.nome||'';
     if (document.activeElement !== funcaoInput && funcaoInput.value !== (p.funcao||'')) funcaoInput.value = p.funcao||'';
     if (document.activeElement !== motivoInput && motivoInput.value !== (p.motivo||'')) motivoInput.value = p.motivo||'';
-    row.querySelector('.dot-option.present').classList.toggle('selected', p.status === 'presente');
-    row.querySelector('.dot-option.absent').classList.toggle('selected', p.status === 'ausente');
+    ausenteToggle.checked = p.status === 'ausente';
+    row.classList.toggle('is-ausente', p.status === 'ausente');
   });
 }
 $('#faltas-add').addEventListener('click', () => {
@@ -1361,89 +1418,99 @@ const EXAME_FASES = [
 ];
 
 const CELULAS = [
-  { id:'d1', codigo:'D-1', nome:'Pessoal', atribuicoes:[
-    'Gestão e controle dos efetivos das forças componentes',
-    'Recompletamento de pessoal e estimativa de perdas em combate',
-    'Moral, disciplina e justiça militar',
-    'Boletins, ordens e histórico de pessoal',
-    'Mão de obra civil (em coordenação com D-2, D-4 e D-9)',
-    'Evacuação, sepultamento e emissão de certidões de óbito',
-    'Anexo de Pessoal ao Plano Operacional',
-  ]},
-  { id:'d2', codigo:'D-2', nome:'Inteligência', atribuicoes:[
-    'Produção de informações e conhecimentos para apoio à decisão',
-    'Necessidades de Inteligência (EEI e ONI)',
-    'Análises de Inteligência e de Contrainteligência',
-    'Ordem de batalha, possibilidades e vulnerabilidades do inimigo',
-    'Lista Integrada de Alvos (LIA) e avaliação de danos',
-    'Arquitetura da rede de Inteligência',
-    'Meteorologia e oceanografia (METOC)',
-    'Anexo de Inteligência ao Plano Operacional',
-  ]},
-  { id:'d3', codigo:'D-3', nome:'Operações', atribuicoes:[
-    'Planejamento, coordenação e integração das ações do Comando Operacional',
-    'Condução do Processo de Planejamento Conjunto (PPC) e consolidação do Exame de Situação Operacional',
-    'Levantamento das Linhas de Ação (LA)',
-    'Registros e relatórios operacionais',
-    'Ordem de Coordenação Preliminar e Sumário de Situação',
-    'Regras de Engajamento',
-    'Subseção de Guerra Cibernética',
-  ]},
-  { id:'d4', codigo:'D-4', nome:'Logística e Mobilização', atribuicoes:[
-    'Análise logística e níveis mínimos de estoque',
-    'Fluxo do apoio logístico e ligação com órgãos apoiadores',
-    'Anexo de Logística e Mobilização ao Plano Operacional',
-    'Recursos e capacidades logísticas das forças em presença',
-    'Normas de evacuação e material salvado/capturado',
-    'Mobilização no âmbito do Comando Operacional',
-    'Lista de Necessidades Complementar (LNC)',
-  ]},
-  { id:'d5', codigo:'D-5', nome:'Planejamento', atribuicoes:[
-    'Auxílio à Seção de Operações na elaboração do Exame de Situação e dos Planos e Ordens',
-    'Proposta do Estado Final Desejado Operacional (EFD Op)',
-    'Identificação dos Objetivos Operacionais e do Desenho Operacional',
-    'Consolidação da LIA e da LIPA, em coordenação com as demais seções',
-    'Matrizes de sincronização da operação/campanha',
-    'Gerenciamento do Risco Operacional (GRO)',
-    'Acompanhamento das operações correntes e futuras',
-  ]},
-  { id:'d6', codigo:'D-6', nome:'Comando e Controle', atribuicoes:[
-    'Análise de Comando e Controle e integração das redes de C²',
-    'Instalação, operação, manutenção e reversão dos sistemas de C²',
-    'Banco de dados do Comando Operacional',
-    'Guerra Eletrônica, em coordenação com as demais seções',
-    'Anexo de C² ao Plano Operacional',
-    'Proteção cibernética dos sistemas de C²',
-  ]},
-  { id:'d7', codigo:'D-7', nome:'Comunicação Social', atribuicoes:[
-    'Parecer sobre as Linhas de Ação sob a ótica da Comunicação Social',
-    'Planejamento e condução das ações de Comunicação Social',
-    'Procedimentos, instalações e porta-vozes para relação com a mídia',
-    'Supervisão do planejamento de Com Soc das Forças Componentes',
-    'Anexo de Comunicação Social ao Plano Operacional',
-  ]},
-  { id:'d8', codigo:'D-8', nome:'Operações de Informação', atribuicoes:[
-    'Análise do ambiente informacional',
-    'Desenvolvimento, revisão e avaliação dos planos de Operações de Informação',
-    'Aspectos políticos, culturais, religiosos e sociais das Op Info',
-    'Coordenação com a Subseção de Guerra Cibernética',
-    'Anexo de Operações de Informação ao Plano Operacional',
-  ]},
-  { id:'d9', codigo:'D-9', nome:'Assuntos Civis', atribuicoes:[
-    'Análise de Assuntos Civis e das implicações das Linhas de Ação na esfera civil',
-    'Planejamento e condução das ações de Assuntos Civis',
-    'Serviços públicos e infraestruturas críticas a preservar na área de operações',
-    'Ligação com autoridades civis locais',
-    'Anexo de Assuntos Civis ao Plano Operacional',
-  ]},
-  { id:'d10', codigo:'D-10', nome:'Administração Financeira', atribuicoes:[
-    'Assessoria orçamentária e financeira ao Comandante Operacional',
-    'Levantamento dos recursos decorrentes das Listas de Necessidades das seções',
-    'Programação orçamentária e financeira no âmbito do Comando Operacional',
-    'Distribuição dos recursos disponíveis às Forças Componentes',
-    'Controle dos registros contábeis e documentos de despesas',
-    'Anexo de Administração Financeira ao Plano Operacional',
-  ]},
+  { id:'d1', codigo:'D-1', nome:'Pessoal',
+    resumo:'Gestão de efetivos, moral, disciplina e assuntos administrativos de pessoal do Comando Operacional.',
+    fases:{
+      fase1:'Contribui para a Diplan com o levantamento inicial de efetivo disponível e primeiras estimativas de recompletamento.',
+      fase2:'Detalha a situação de pessoal (efetivos, moral, disciplina, mão de obra civil) para compor Nossas Forças e os Fatores de Força e Fraqueza.',
+      fase3:'Avalia o impacto de cada Linha de Ação sobre recompletamento, evacuação e sepultamento, subsidiando o Confronto.',
+      fase4:'Fornece critérios de sustentabilidade de pessoal para a Matriz de Decisão.',
+      fase5:'Registra os desdobramentos de pessoal decorrentes da decisão do Comandante.',
+      fase6:'Elabora o Anexo de Pessoal ao Plano Operacional, com base no Conceito Preliminar da Operação.',
+    }},
+  { id:'d2', codigo:'D-2', nome:'Inteligência',
+    resumo:'Produção de conhecimento sobre o inimigo e o ambiente operacional para apoiar a decisão do Comandante.',
+    fases:{
+      fase1:'Levanta conhecimentos iniciais sobre o ambiente operacional e formula as primeiras Necessidades de Inteligência.',
+      fase2:'Produz a Ordem de Batalha, possibilidades e vulnerabilidades do inimigo, e apoia a Comparação de Poderes de Combate.',
+      fase3:'Elabora as Possibilidades do Inimigo (Psb Ini) e a Lista Integrada de Alvos preliminar para o Confronto das Linhas de Ação.',
+      fase4:'Avalia riscos e vulnerabilidades de inteligência associados a cada Linha de Ação na comparação.',
+      fase5:'Consolida o quadro de inteligência que referenda a decisão do Comandante.',
+      fase6:'Elabora o Anexo de Inteligência ao Plano Operacional.',
+    }},
+  { id:'d3', codigo:'D-3', nome:'Operações',
+    resumo:'Conduz o Processo de Planejamento Conjunto (PPC) e consolida o Exame de Situação Operacional, integrando os produtos de todas as seções.',
+    fases:{}},
+  { id:'d4', codigo:'D-4', nome:'Logística e Mobilização',
+    resumo:'Sustentação logística e mobilização de recursos para as forças em presença.',
+    fases:{
+      fase1:'Levanta os recursos logísticos disponíveis e as restrições que afetam o Estado Final Desejado Operacional.',
+      fase2:'Analisa níveis mínimos de estoque e fluxo de apoio logístico, compondo a Determinação Inicial da Adequação da Própria Força.',
+      fase3:'Avalia a viabilidade logística de cada Linha de Ação, apoiando o Confronto com dados de sustentação.',
+      fase4:'Fornece critérios logísticos e de mobilização para a Matriz de Decisão.',
+      fase5:'Consolida a Lista de Necessidades Complementar decorrente da decisão do Comandante.',
+      fase6:'Elabora o Anexo de Logística e Mobilização ao Plano Operacional.',
+    }},
+  { id:'d5', codigo:'D-5', nome:'Planejamento',
+    resumo:'Auxilia diretamente a Seção de Operações na condução do Exame de Situação e na elaboração dos Planos e Ordens.',
+    fases:{
+      fase1:'Propõe o Estado Final Desejado Operacional e apoia a identificação dos Objetivos Operacionais.',
+      fase2:'Sistematiza a Abordagem Operacional (Desenho Operacional) a partir da compreensão da situação.',
+      fase3:'Consolida a Lista Integrada de Alvos e a LIPA, em coordenação com as demais seções, durante a elaboração das Linhas de Ação.',
+      fase4:'Apoia a montagem da Matriz de Decisão e das matrizes de sincronização preliminares.',
+      fase5:'Formaliza os produtos de planejamento decorrentes da decisão do Comandante.',
+      fase6:'Consolida o Conceito Preliminar da Operação e inicia o Gerenciamento do Risco Operacional (GRO).',
+    }},
+  { id:'d6', codigo:'D-6', nome:'Comando e Controle',
+    resumo:'Integração das redes e sistemas de Comando e Controle (C²) do Comando Operacional.',
+    fases:{
+      fase1:'Levanta a infraestrutura de C² disponível e suas limitações frente à missão.',
+      fase2:'Analisa a integração das redes de C² frente à situação e às forças em presença.',
+      fase3:'Avalia requisitos de C² e de Guerra Eletrônica para cada Linha de Ação.',
+      fase4:'Compara a viabilidade de C² de cada Linha de Ação, incluindo riscos de proteção cibernética.',
+      fase5:'Consolida o banco de dados do Comando Operacional com a decisão tomada.',
+      fase6:'Elabora o Anexo de C² ao Plano Operacional.',
+    }},
+  { id:'d7', codigo:'D-7', nome:'Comunicação Social',
+    resumo:'Planejamento e condução das ações de Comunicação Social do Comando Operacional.',
+    fases:{
+      fase1:'Faz a avaliação inicial do ambiente de comunicação social relacionado à missão.',
+      fase2:'Levanta o cenário de mídia e de percepção pública relevante à situação.',
+      fase3:'Emite parecer sobre as Linhas de Ação sob a ótica da Comunicação Social.',
+      fase4:'Contribui com critérios de exposição midiática na comparação das Linhas de Ação.',
+      fase5:'Prepara procedimentos, instalações e porta-vozes conforme a decisão do Comandante.',
+      fase6:'Elabora o Anexo de Comunicação Social ao Plano Operacional.',
+    }},
+  { id:'d8', codigo:'D-8', nome:'Operações de Informação',
+    resumo:'Análise do ambiente informacional e condução dos planos de Operações de Informação.',
+    fases:{
+      fase1:'Faz a análise inicial do ambiente informacional relacionado à missão.',
+      fase2:'Aprofunda a análise do ambiente informacional e dos aspectos políticos, culturais e sociais relevantes.',
+      fase3:'Avalia o efeito de cada Linha de Ação no ambiente informacional, em coordenação com a Guerra Cibernética.',
+      fase4:'Compara as Linhas de Ação quanto ao impacto em Operações de Informação.',
+      fase5:'Ajusta os planos de Operações de Informação à decisão do Comandante.',
+      fase6:'Elabora o Anexo de Operações de Informação ao Plano Operacional.',
+    }},
+  { id:'d9', codigo:'D-9', nome:'Assuntos Civis',
+    resumo:'Análise das implicações civis das operações e ligação com autoridades locais.',
+    fases:{
+      fase1:'Levanta os aspectos civis iniciais relevantes à área de operações.',
+      fase2:'Analisa serviços públicos e infraestruturas críticas a preservar na área de responsabilidade.',
+      fase3:'Avalia as implicações de cada Linha de Ação na esfera civil e a ligação com autoridades locais.',
+      fase4:'Compara as Linhas de Ação quanto ao impacto sobre a população e a infraestrutura civil.',
+      fase5:'Ajusta as ações de Assuntos Civis à decisão do Comandante.',
+      fase6:'Elabora o Anexo de Assuntos Civis ao Plano Operacional.',
+    }},
+  { id:'d10', codigo:'D-10', nome:'Administração Financeira',
+    resumo:'Assessoria orçamentária e financeira ao Comandante Operacional.',
+    fases:{
+      fase1:'Levanta os recursos orçamentários inicialmente disponíveis para a operação.',
+      fase2:'Presta assessoria orçamentária e financeira ao Comandante frente à situação apresentada.',
+      fase3:'Estima os custos associados a cada Linha de Ação para subsidiar o Confronto.',
+      fase4:'Compara as Linhas de Ação quanto à viabilidade orçamentária e financeira.',
+      fase5:'Programa os recursos decorrentes da decisão do Comandante.',
+      fase6:'Elabora o Anexo de Administração Financeira ao Plano Operacional.',
+    }},
 ];
 
 const DOC_EXTENSIONS = ['pdf','jpg','jpeg','png','gif','webp','doc','docx','ppt','pptx'];
@@ -1551,24 +1618,48 @@ function initCelulasAccordion(){
     item.className = 'accordion-item';
     item.dataset.celula = celula.id;
 
-    const atribuicoesHtml = celula.atribuicoes.map(a => `<li>${escapeHtml(a)}</li>`).join('');
-    const exameNestedHtml = celula.id === 'd3' ? `
-      <div class="celula-exame-nested">
-        <h4>Exame de Situação Operacional</h4>
-        <div class="accordion" id="exame-accordion"></div>
-      </div>
-    ` : '';
+    const faseBlocksHtml = EXAME_FASES.map(fase => {
+      const texto = celula.fases[fase.id];
+      const textoHtml = texto ? `<p class="fase-block-text">${escapeHtml(texto)}</p>` : '';
+
+      const docsHtml = celula.id === 'd3'
+        ? fase.docs.map(doc => `
+            <div class="fase-doc-item">
+              <h5>${escapeHtml(doc.label)}</h5>
+              <div class="pdf-upload-zone" id="exame-${fase.id}-${doc.key}-zone">
+                Clique aqui ou arraste um arquivo (PDF, imagem, Word ou PowerPoint)
+                <input type="file" id="exame-${fase.id}-${doc.key}-input" accept="${DOC_ACCEPT}" multiple style="display:none">
+              </div>
+              <div class="pdf-list" id="exame-${fase.id}-${doc.key}-list"></div>
+            </div>
+          `).join('')
+        : `
+            <div class="fase-doc-item">
+              <div class="pdf-upload-zone" id="celula-${celula.id}-${fase.id}-zone">
+                Clique aqui ou arraste o produto desta fase (PDF, imagem, Word ou PowerPoint)
+                <input type="file" id="celula-${celula.id}-${fase.id}-input" accept="${DOC_ACCEPT}" multiple style="display:none">
+              </div>
+              <div class="pdf-list" id="celula-${celula.id}-${fase.id}-list"></div>
+            </div>
+          `;
+
+      return `
+        <div class="fase-block" data-fase="${fase.id}">
+          <div class="fase-block-title">${escapeHtml(fase.label)}</div>
+          ${textoHtml}
+          ${docsHtml}
+        </div>
+      `;
+    }).join('');
 
     item.innerHTML = `
       <button class="accordion-header" type="button">
-        <span>${celula.codigo} &mdash; ${escapeHtml(celula.nome)}</span>
+        <span><span class="celula-code-badge">${celula.codigo}</span>${escapeHtml(celula.nome)}</span>
         <span class="chevron">&#9660;</span>
       </button>
       <div class="accordion-body">
-        <ul class="celula-atribuicoes">${atribuicoesHtml}</ul>
-        <div class="celula-produtos-label">Principais produtos da célula (preenchido pelo chefe)</div>
-        <textarea class="produtos-textarea" id="celula-${celula.id}-produtos" placeholder="Liste aqui os principais produtos desta célula..."></textarea>
-        ${exameNestedHtml}
+        <p class="celula-resumo">${escapeHtml(celula.resumo)}</p>
+        <div class="celula-fases">${faseBlocksHtml}</div>
       </div>
     `;
     container.appendChild(item);
@@ -1577,63 +1668,31 @@ function initCelulasAccordion(){
       item.classList.toggle('open');
     });
 
-    const textarea = item.querySelector('.produtos-textarea');
-    textarea.addEventListener('input', debounce(() => {
-      db.ref('operations/' + currentOp + '/celulas/' + celula.id + '/produtos').set(textarea.value);
-    }, 400));
+    EXAME_FASES.forEach(fase => {
+      if (celula.id === 'd3'){
+        fase.docs.forEach(doc => {
+          setupDocUploadZone('exame-' + fase.id + '-' + doc.key, 'exame/' + fase.id + '/docs/' + doc.key);
+        });
+      } else {
+        setupDocUploadZone('celula-' + celula.id + '-' + fase.id, 'celulas/' + celula.id + '/fases/' + fase.id + '/docs');
+      }
+    });
   });
 }
 initCelulasAccordion();
 
 function renderCelulas(){
   CELULAS.forEach(celula => {
-    const textarea = $('#celula-' + celula.id + '-produtos');
-    if (!textarea) return;
-    const value = (opState.celulas[celula.id] || {}).produtos || '';
-    if (document.activeElement !== textarea && textarea.value !== value) textarea.value = value;
-  });
-}
-
-function initExameAccordion(){
-  const container = $('#exame-accordion');
-  container.innerHTML = '';
-  EXAME_FASES.forEach(fase => {
-    const item = document.createElement('div');
-    item.className = 'accordion-item';
-    item.dataset.fase = fase.id;
-
-    const body = fase.docs.length === 0
-      ? '<div class="empty-hint">Conteúdo desta fase será definido em breve.</div>'
-      : fase.docs.map(doc => `
-        <div class="doc-group" data-doc-key="${doc.key}">
-          <h4>${escapeHtml(doc.label)}</h4>
-          <div class="pdf-upload-zone" id="exame-${fase.id}-${doc.key}-zone">
-            Clique aqui ou arraste um arquivo (PDF, imagem, Word ou PowerPoint)
-            <input type="file" id="exame-${fase.id}-${doc.key}-input" accept="${DOC_ACCEPT}" multiple style="display:none">
-          </div>
-          <div class="pdf-list" id="exame-${fase.id}-${doc.key}-list"></div>
-        </div>
-      `).join('');
-
-    item.innerHTML = `
-      <button class="accordion-header" type="button">
-        <span>${escapeHtml(fase.label)}</span>
-        <span class="chevron">&#9660;</span>
-      </button>
-      <div class="accordion-body">${body}</div>
-    `;
-    container.appendChild(item);
-
-    item.querySelector('.accordion-header').addEventListener('click', () => {
-      item.classList.toggle('open');
-    });
-
-    fase.docs.forEach(doc => {
-      setupDocUploadZone('exame-' + fase.id + '-' + doc.key, 'exame/' + fase.id + '/docs/' + doc.key);
+    if (celula.id === 'd3') return;
+    EXAME_FASES.forEach(fase => {
+      const listEl = $('#celula-' + celula.id + '-' + fase.id + '-list');
+      if (!listEl) return;
+      const files = (((opState.celulas[celula.id] || {}).fases || {})[fase.id] || {}).docs || {};
+      renderDocList(listEl, files, 'celulas/' + celula.id + '/fases/' + fase.id + '/docs');
     });
   });
+  renderDashboard();
 }
-initExameAccordion();
 
 function renderExame(){
   EXAME_FASES.forEach(fase => {
@@ -1652,15 +1711,25 @@ function renderExame(){
 function countExameProgress(){
   let total = 0, done = 0;
   const perFase = EXAME_FASES.map(fase => {
-    let faseTotal = 0, faseDone = 0;
-    fase.docs.forEach(doc => {
-      faseTotal++;
-      const files = ((opState.exame[fase.id] || {}).docs || {})[doc.key] || {};
-      if (Object.keys(files).length > 0) faseDone++;
+    const items = [];
+    CELULAS.forEach(celula => {
+      if (celula.id === 'd3'){
+        fase.docs.forEach(doc => {
+          const files = ((opState.exame[fase.id] || {}).docs || {})[doc.key] || {};
+          const fileList = Object.values(files);
+          items.push({ celula: celula.codigo, label: doc.label, done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
+        });
+      } else {
+        const files = (((opState.celulas[celula.id] || {}).fases || {})[fase.id] || {}).docs || {};
+        const fileList = Object.values(files);
+        items.push({ celula: celula.codigo, label: celula.nome, done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
+      }
     });
+    const faseDone = items.filter(i => i.done).length;
+    const faseTotal = items.length;
     total += faseTotal;
     done += faseDone;
-    return { label: fase.label, done: faseDone, total: faseTotal };
+    return { id: fase.id, label: fase.label, done: faseDone, total: faseTotal, items };
   });
   return { total, done, perFase };
 }
@@ -1690,21 +1759,39 @@ function renderDashboardTiles(){
   `;
 }
 
+let expandedFases = new Set();
+
 function renderDashboardFases(){
   const { perFase } = countExameProgress();
   $('#dashboard-fases').innerHTML = perFase.map(f => {
     const pct = f.total > 0 ? Math.round((f.done / f.total) * 100) : 0;
     const complete = f.total > 0 && f.done === f.total;
+    const detailHtml = f.items.map(i => `
+      <div class="fase-detail-item ${i.done ? 'done' : 'pending'}">
+        <span class="fase-detail-celula">${escapeHtml(i.celula)}</span>
+        <span class="fase-detail-label">${escapeHtml(i.label)}${i.fileNames.length ? ' — ' + escapeHtml(i.fileNames.join(', ')) : ''}</span>
+        <span class="fase-detail-status">${i.done ? 'Enviado' : 'Pendente'}</span>
+      </div>
+    `).join('');
     return `
-      <div class="progress-row">
+      <div class="progress-row${expandedFases.has(f.id) ? ' open' : ''}" data-fase="${f.id}">
         <div class="progress-row-head">
-          <span class="fase-label">${escapeHtml(f.label)}</span>
+          <span class="fase-label"><span class="chevron">&#9660;</span>${escapeHtml(f.label)}</span>
           <span class="fase-count">${f.done}/${f.total}</span>
         </div>
         <div class="progress-track"><div class="progress-fill${complete ? ' complete' : ''}" style="width:${pct}%"></div></div>
+        <div class="fase-detail">${detailHtml}</div>
       </div>
     `;
   }).join('');
+  $all('.progress-row', $('#dashboard-fases')).forEach(row => {
+    row.addEventListener('click', () => {
+      const faseId = row.dataset.fase;
+      if (expandedFases.has(faseId)) expandedFases.delete(faseId);
+      else expandedFases.add(faseId);
+      row.classList.toggle('open');
+    });
+  });
 }
 
 function renderDeadline(){
