@@ -733,8 +733,19 @@
     .title-box{min-width:0; width:100%; max-width:320px; padding:12px 18px;}
     .title-box h1{font-size:1.15rem;}
     .app-body{flex-direction:column;}
-    .sidebar{flex-direction:row; width:100%; overflow-x:auto; gap:8px; padding-bottom:4px;}
-    .tab-btn{white-space:nowrap; padding:12px 14px;}
+    .sidebar{display:grid; grid-template-columns:repeat(3, 1fr); width:100%; gap:8px;}
+    .tab-btn{
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      white-space:normal;
+      padding:10px 6px;
+      font-size:.74rem;
+      line-height:1.25;
+      gap:5px;
+    }
+    .tab-btn svg{width:18px; height:18px;}
     .top-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
     .top-actions button{border-radius:10px; padding:10px 12px; font-size:.82rem; text-align:center;}
     .panel-card{padding:16px;}
@@ -1433,7 +1444,7 @@ const EXAME_FASES = [
     {key:'adequacao-propria-forca',               label:'Determinação Inicial da Adequação da Própria Força'},
   ]},
   { id:'fase3', label:'Fase 3 — Possibilidade(s) do Inimigo, Linhas de Ação e Confronto', docs:[
-    {key:'possibilidades-inimigo',    label:'Possibilidades do Inimigo (Psb Ini)'},
+    {key:'possibilidades-inimigo',    label:'Possibilidades do Inimigo (Psb Ini)', owner:'d2'},
     {key:'linhas-de-acao',            label:'Linhas de Ação (elaboração, representação gráfica e conceito sumário)'},
     {key:'confronto-linhas-de-acao',  label:'Confronto das Linhas de Ação'},
   ]},
@@ -1462,7 +1473,8 @@ const CELULAS = [
       fase2:'Mantém atualizada a Ordem de Batalha do inimigo e o mapa de situação, e elabora as Análises de Inteligência e de Contrainteligência.',
       fase3:'Levanta as Possibilidades do Inimigo (Psb Ini), identificando vulnerabilidades e ameaças prováveis para a operação.',
       fase6:'Confecciona o Anexo de Inteligência e seus apêndices ao Plano Operacional.',
-    }},
+    },
+    produtos:{ fase3:null }},
   { id:'d3', codigo:'D-3', nome:'Operações',
     resumo:'Conduz o Processo de Planejamento Conjunto (PPC) e é responsável pela consolidação e formalização do documento Exame de Situação Operacional, reunindo os produtos de todas as seções.',
     fases:{}},
@@ -1479,6 +1491,12 @@ const CELULAS = [
       fase2:'Desenvolve a Abordagem Operacional (Desenho Operacional) com base nos Centros de Gravidade e no Estado Final Desejado Operacional.',
       fase3:'Consolida, em coordenação com as Seções de Operações e de Inteligência, a Lista Integrada de Alvos (LIA) e a Lista Integrada e Priorizada de Alvos (LIPA).',
       fase6:'Realiza o Gerenciamento do Risco Operacional (GRO), consolidando o respectivo anexo.',
+    },
+    produtos:{
+      fase1:null,
+      fase2:null,
+      fase3:'Lista Integrada de Alvos (LIA) e Lista Integrada e Priorizada de Alvos (LIPA)',
+      fase6:'Gerenciamento do Risco Operacional (GRO)',
     }},
   { id:'d6', codigo:'D-6', nome:'Comando e Controle',
     resumo:'Análise de Comando e Controle e coordenação da integração das redes que interligam os sistemas de C² do Comando Operacional e das Forças Componentes; instalação, operação, manutenção e reversão dos sistemas de C²; gerenciamento do banco de dados do Comando Operacional; planejamento das atividades de Guerra Eletrônica; e estabelecimento de medidas de proteção cibernética dos sistemas de C². Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
@@ -1606,6 +1624,14 @@ function setupDocUploadZone(idSlug, refPath){
   });
 }
 
+function genericZoneTitle(celula, faseId){
+  return celula.produtos && (faseId in celula.produtos) ? celula.produtos[faseId] : undefined;
+}
+function celulaHasGenericZone(celula, faseId){
+  if (celula.id === 'd3' || !celula.fases[faseId]) return false;
+  return genericZoneTitle(celula, faseId) !== null;
+}
+
 function initCelulasAccordion(){
   const container = $('#celulas-accordion');
   container.innerHTML = '';
@@ -1633,8 +1659,10 @@ function initCelulasAccordion(){
             </div>
           `).join('');
 
-      const genericHtml = (celula.id !== 'd3' && celula.fases[fase.id]) ? `
+      const genericTitle = genericZoneTitle(celula, fase.id);
+      const genericHtml = celulaHasGenericZone(celula, fase.id) ? `
             <div class="fase-doc-item">
+              ${genericTitle ? `<h5>${escapeHtml(genericTitle)}</h5>` : ''}
               <div class="pdf-upload-zone" id="celula-${celula.id}-${fase.id}-zone">
                 Clique aqui ou arraste o produto desta fase (PDF, imagem, Word ou PowerPoint)
                 <input type="file" id="celula-${celula.id}-${fase.id}-input" accept="${DOC_ACCEPT}" multiple style="display:none">
@@ -1673,7 +1701,7 @@ function initCelulasAccordion(){
       fase.docs.filter(doc => docOwner(doc) === celula.id).forEach(doc => {
         setupDocUploadZone('exame-' + fase.id + '-' + doc.key, 'exame/' + fase.id + '/docs/' + doc.key);
       });
-      if (celula.id !== 'd3' && celula.fases[fase.id]){
+      if (celulaHasGenericZone(celula, fase.id)){
         setupDocUploadZone('celula-' + celula.id + '-' + fase.id, 'celulas/' + celula.id + '/fases/' + fase.id + '/docs');
       }
     });
@@ -1718,7 +1746,7 @@ function countExameProgress(){
         const fileList = Object.values(files);
         items.push({ celula: celula.codigo, label: doc.label, done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
       });
-      if (celula.id !== 'd3' && celula.fases[fase.id]){
+      if (celulaHasGenericZone(celula, fase.id)){
         const files = (((opState.celulas[celula.id] || {}).fases || {})[fase.id] || {}).docs || {};
         const fileList = Object.values(files);
         items.push({ celula: celula.codigo, label: celula.fases[fase.id], done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
