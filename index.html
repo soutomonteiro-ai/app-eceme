@@ -131,15 +131,15 @@
   .top-actions{
     display:flex;
     justify-content:center;
-    gap:80px;
-    padding:14px 20px 22px;
     flex-wrap:wrap;
+    gap:12px;
+    padding:14px 20px 22px;
   }
   .top-actions button{
     background:var(--olive);
     border:1px solid var(--border);
     color:var(--text);
-    padding:10px 22px;
+    padding:10px 20px;
     border-radius:999px;
     cursor:pointer;
     font-weight:600;
@@ -147,6 +147,7 @@
     font-size:.9rem;
     display:flex;
     align-items:center;
+    justify-content:center;
     gap:8px;
     transition:background .15s, transform .1s;
   }
@@ -264,8 +265,8 @@
   .add-btn:hover{background:rgba(201,162,39,.08);}
 
   /* ===== Faltas ===== */
-  .date-row{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
-  .date-row label{color:var(--text-dim); font-size:.9rem;}
+  .date-row{display:flex; align-items:center; gap:12px; margin-bottom:18px; flex-wrap:wrap;}
+  .date-row label{color:var(--text-dim); font-size:.9rem; white-space:nowrap; flex:none;}
   .date-row input[type=date]{
     background:var(--bg-alt);
     border:1px solid var(--border);
@@ -727,12 +728,23 @@
   }
 
   @media (max-width: 760px){
-    .topbar{padding:14px 74px 6px;}
-    .corner-icon{width:44px;}
+    .topbar{padding:12px 56px 6px;}
+    .corner-icon{width:34px;}
+    .title-box{min-width:0; width:100%; max-width:320px; padding:12px 18px;}
+    .title-box h1{font-size:1.15rem;}
     .app-body{flex-direction:column;}
     .sidebar{flex-direction:row; width:100%; overflow-x:auto; gap:8px; padding-bottom:4px;}
     .tab-btn{white-space:nowrap; padding:12px 14px;}
-    .top-actions{gap:14px;}
+    .top-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    .top-actions button{border-radius:10px; padding:10px 12px; font-size:.82rem; text-align:center;}
+    .panel-card{padding:16px;}
+  }
+
+  @media (max-width: 420px){
+    .topbar{padding:10px 46px 4px;}
+    .corner-icon{width:28px;}
+    .title-box h1{font-size:1rem;}
+    .presence-row .data-input{flex-basis:100%;}
   }
 </style>
 </head>
@@ -758,6 +770,10 @@
 </header>
 
 <div class="top-actions">
+  <button id="btn-constituicao">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    CONSTITUIÇÃO DO EM
+  </button>
   <button id="btn-tema">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
     TEMA
@@ -884,6 +900,16 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
     Atualizar
   </button>
+</div>
+
+<!-- Constituição do EM modal -->
+<div class="modal-overlay" id="constituicao-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-close="constituicao-modal">&times;</button>
+    <h3>Constituição do EM</h3>
+    <p style="color:var(--text-dim); font-size:.85rem; margin-bottom:12px;">Envie o documento com a constituição do Estado-Maior (integrantes do grupo).</p>
+    <div id="constituicao-content"></div>
+  </div>
 </div>
 
 <!-- TEMA modal -->
@@ -1032,7 +1058,7 @@ let currentOp = localStorage.getItem('eceme_current_op') || 'hefesto';
 if (!OPS.find(o => o.id === currentOp)) currentOp = 'hefesto';
 
 let activeRefs = [];
-let opState = { faltas:{data:'', pessoas:{}}, tema:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{}, celulas:{}, prazoFinal:'' };
+let opState = { faltas:{data:'', pessoas:{}}, tema:null, constituicaoEM:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{}, celulas:{}, prazoFinal:'' };
 
 function $(sel, root=document){ return root.querySelector(sel); }
 function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
@@ -1137,6 +1163,10 @@ function attachListeners(){
   const faltasCb = snap => { opState.faltas = snap.val() || {data:'', pessoas:{}}; renderFaltas(); renderDashboard(); };
   base.child('faltas').on('value', faltasCb);
   activeRefs.push({ref: base.child('faltas'), cb: faltasCb});
+
+  const constituicaoCb = snap => { opState.constituicaoEM = snap.val(); if($('#constituicao-modal').classList.contains('open')) renderConstituicaoModal(); };
+  base.child('constituicaoEM').on('value', constituicaoCb);
+  activeRefs.push({ref: base.child('constituicaoEM'), cb: constituicaoCb});
 
   const temaCb = snap => { opState.tema = snap.val(); renderTemaButton(); if($('#tema-modal').classList.contains('open')) renderTemaModal(); };
   base.child('tema').on('value', temaCb);
@@ -1420,65 +1450,58 @@ const EXAME_FASES = [
 
 const CELULAS = [
   { id:'d1', codigo:'D-1', nome:'Pessoal',
-    resumo:'Gestão de efetivos, moral, disciplina e assuntos administrativos de pessoal do Comando Operacional. Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
+    resumo:'Gestão e controle dos efetivos das forças componentes; coordenação dos pedidos de recompletamento de pessoal e estimativa de perdas em combate; medidas para manter o moral; disciplina e justiça militar; boletins, ordens e histórico de pessoal; mão de obra civil (coord. D-2, D-4 e D-9); e evacuação, sepultamento e emissão de certidões de óbito. Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
     fases:{
       fase6:'Confecciona o Anexo de Pessoal e seus apêndices ao Plano Operacional.',
     }},
   { id:'d2', codigo:'D-2', nome:'Inteligência',
-    resumo:'Produção de conhecimento sobre o inimigo e o ambiente operacional para apoiar a decisão do Comandante.',
+    resumo:'Coordenação da produção de informações e conhecimentos para apoio à decisão do Comandante; proposição das Necessidades de Inteligência (NI) em todas as fases da operação; avaliação de danos aos sistemas de alvos; supervisão da contrainteligência; arquitetura da rede de Inteligência (coord. D-6); e meteorologia e oceanografia (METOC).',
     fases:{
-      fase2:'Levanta as Características da Área de Responsabilidade, as Forças Inimigas, os Fatores de Força e Fraqueza e as Necessidades de Inteligência.',
-      fase3:'Elabora as Possibilidades do Inimigo (Psb Ini) e apoia o Confronto das Linhas de Ação.',
+      fase2:'Mantém atualizada a Ordem de Batalha do inimigo e o mapa de situação, e elabora as Análises de Inteligência e de Contrainteligência.',
+      fase3:'Levanta as Possibilidades do Inimigo (Psb Ini), identificando vulnerabilidades e ameaças, e colabora com as Seções de Operações e de Planejamento na elaboração da Lista Integrada de Alvos (LIA).',
       fase6:'Confecciona o Anexo de Inteligência e seus apêndices ao Plano Operacional.',
     }},
   { id:'d3', codigo:'D-3', nome:'Operações',
     resumo:'Conduz o Processo de Planejamento Conjunto (PPC) e é responsável pela consolidação e formalização do documento Exame de Situação Operacional, reunindo os produtos de todas as seções.',
     fases:{}},
   { id:'d4', codigo:'D-4', nome:'Logística e Mobilização',
-    resumo:'Sustentação logística e mobilização de recursos para as forças em presença.',
+    resumo:'Análise logística e estabelecimento dos níveis mínimos de estoque; funcionamento do fluxo do apoio logístico e ligação com os órgãos apoiadores; levantamento dos recursos e capacidades logísticas das forças em presença; coordenação e controle das ações de mobilização; supervisão dos planejamentos logísticos das Forças Componentes; e normas para evacuação, material salvado/capturado e utilização de recursos locais (coord. D-9).',
     fases:{
-      fase2:'Analisa os meios logísticos disponíveis, as forças em presença sob o aspecto logístico e as facilidades e dificuldades da área de responsabilidade.',
-      fase3:'Avalia as Possibilidades do Inimigo e elabora as Linhas de Ação sob o aspecto logístico, apoiando o Confronto.',
-      fase4:'Compara as Linhas de Ação do ponto de vista logístico, priorizando as mais sustentáveis.',
+      fase3:'Colabora com a Seção de Operações na avaliação da praticabilidade, sob o aspecto logístico, das Linhas de Ação elaboradas.',
       fase6:'Confecciona o Anexo de Logística e Mobilização, incluindo a Lista de Necessidades Complementar (LNC), ao Plano Operacional.',
     }},
   { id:'d5', codigo:'D-5', nome:'Planejamento',
-    resumo:'Auxilia diretamente a Seção de Operações na elaboração dos documentos do Exame de Situação e na etapa de Elaboração de Planos e Ordens.',
+    resumo:'Auxílio direto à Seção de Operações na elaboração dos documentos do Exame de Situação e da etapa de Elaboração de Planos e Ordens; assessoramento ao Chefe do EMCj na condução das reuniões diárias; acompanhamento das operações correntes e planejamento das operações futuras; e elaboração das matrizes de sincronização da operação/campanha.',
     fases:{
-      fase1:'Propõe ao Comandante o Estado Final Desejado Operacional (EFD Op), quando não definido claramente pelo escalão superior.',
-      fase2:'Desenvolve a Abordagem Operacional (Desenho Operacional) com base nos Centros de Gravidade e no EFD Op.',
+      fase1:'Propõe ao Comandante o Estado Final Desejado Operacional (EFD Op) e identifica os Objetivos Operacionais, com base nos Centros de Gravidade, quando não definidos pelo escalão superior.',
+      fase2:'Desenvolve a Abordagem Operacional (Desenho Operacional) com base nos Centros de Gravidade e no Estado Final Desejado Operacional.',
+      fase3:'Consolida, em coordenação com as Seções de Operações e de Inteligência, a Lista Integrada de Alvos (LIA) e a Lista Integrada e Priorizada de Alvos (LIPA).',
       fase6:'Realiza o Gerenciamento do Risco Operacional (GRO), consolidando o respectivo anexo.',
     }},
   { id:'d6', codigo:'D-6', nome:'Comando e Controle',
-    resumo:'Integração das redes e sistemas de Comando e Controle (C²) do Comando Operacional.',
+    resumo:'Análise de Comando e Controle e coordenação da integração das redes que interligam os sistemas de C² do Comando Operacional e das Forças Componentes; instalação, operação, manutenção e reversão dos sistemas de C²; gerenciamento do banco de dados do Comando Operacional; planejamento das atividades de Guerra Eletrônica; e estabelecimento de medidas de proteção cibernética dos sistemas de C². Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
     fases:{
-      fase2:'Analisa os Fatores de Força e Fraqueza de Comando e Controle das forças em presença.',
-      fase3:'Avalia a viabilidade de apoio de C² a cada Linha de Ação elaborada.',
       fase6:'Confecciona o Anexo de C² ao Plano Operacional.',
     }},
   { id:'d7', codigo:'D-7', nome:'Comunicação Social',
-    resumo:'Planejamento e condução das ações de Comunicação Social do Comando Operacional.',
+    resumo:'Análise de Comunicação Social; planejamento e condução das ações de Com Soc em apoio às operações militares; supervisão do planejamento de Com Soc das Forças Componentes; estabelecimento de procedimentos, instalações e porta-vozes para relação com a mídia; e orientação, coordenação e controle da atuação da mídia.',
     fases:{
-      fase2:'Analisa a situação de Comunicação Social relevante à missão e à área de responsabilidade.',
-      fase3:'Emite parecer sobre as Linhas de Ação sob a ótica da Comunicação Social.',
+      fase3:'Emite parecer, à luz da Comunicação Social, sobre as Linhas de Ação examinadas e sobre o apoio à manobra planejada.',
       fase6:'Confecciona o Anexo de Comunicação Social ao Plano Operacional.',
     }},
   { id:'d8', codigo:'D-8', nome:'Operações de Informação',
-    resumo:'Análise do ambiente informacional e condução dos planos de Operações de Informação.',
+    resumo:'Análise do ambiente informacional, considerando as Capacidades Relacionadas à Informação (Operações Psicológicas, Guerra Eletrônica, Defesa Cibernética, Comunicação Social e Assuntos Civis); desenvolvimento, revisão e avaliação dos planos de Operações de Informação; e assessoramento quanto às implicações políticas, culturais, religiosas e sociais das Op Info. Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
     fases:{
-      fase2:'Analisa o ambiente informacional e as Capacidades Relacionadas à Informação pertinentes à situação.',
-      fase3:'Avalia o efeito de cada Linha de Ação no ambiente informacional.',
       fase6:'Confecciona o Anexo de Operações de Informação ao Plano Operacional.',
     }},
   { id:'d9', codigo:'D-9', nome:'Assuntos Civis',
-    resumo:'Análise das implicações civis das operações e ligação com autoridades locais.',
+    resumo:'Análise de Assuntos Civis; planejamento e condução das ações de sua responsabilidade em apoio às operações militares; verificação dos serviços públicos e infraestruturas críticas a preservar na área de responsabilidade; e verificação da necessidade de ligação com autoridades civis locais.',
     fases:{
-      fase2:'Analisa a situação de Assuntos Civis na área de responsabilidade, incluindo serviços públicos e infraestruturas críticas.',
-      fase3:'Avalia as implicações de cada Linha de Ação na esfera civil.',
+      fase3:'Avalia as implicações, na esfera de Assuntos Civis, inerentes às Linhas de Ação elaboradas pela Seção de Operações.',
       fase6:'Confecciona o Anexo de Assuntos Civis ao Plano Operacional.',
     }},
   { id:'d10', codigo:'D-10', nome:'Administração Financeira',
-    resumo:'Assessoria orçamentária e financeira ao Comandante Operacional. Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
+    resumo:'Assessoria ao Comandante Operacional em administração orçamentária e financeira; levantamento dos recursos orçamentários decorrentes das Listas de Necessidades das seções (coord. D-4); programação orçamentária e financeira, compatibilizando recursos com despesas; e supervisão do controle dos registros contábeis e documentos de despesas. Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
     fases:{
       fase6:'Confecciona o Anexo de Administração Financeira ao Plano Operacional.',
     }},
@@ -1807,6 +1830,58 @@ $('#prazo-final-input').addEventListener('change', e => {
 setInterval(renderDeadline, 60 * 1000);
 
 /* ============ TEMA modal ============ */
+/* ============ Constituição do EM modal ============ */
+function renderConstituicaoModal(){
+  const content = $('#constituicao-content');
+  const file = opState.constituicaoEM;
+  if (!file){
+    content.innerHTML = `
+      <div class="pdf-upload-zone" id="constituicao-upload-zone">
+        Clique aqui para enviar o arquivo (PDF, imagem, Word ou PowerPoint)
+        <input type="file" id="constituicao-file-input" accept="${DOC_ACCEPT}" style="display:none">
+      </div>
+    `;
+    $('#constituicao-upload-zone').addEventListener('click', () => $('#constituicao-file-input').click());
+    $('#constituicao-file-input').addEventListener('change', async e => {
+      if (!e.target.files[0]) return;
+      const f = e.target.files[0];
+      const dataUrl = await readFileAsDataURL(f);
+      await opRef('constituicaoEM').set({fileName:f.name, size:f.size, fileData:dataUrl, uploadedAt:Date.now()});
+    });
+  } else {
+    const previewable = getExt(file.fileName) === 'pdf' || IMAGE_EXTENSIONS.includes(getExt(file.fileName));
+    content.innerHTML = `
+      <div class="pdf-card" style="margin-bottom:14px;">
+        <svg class="pdf-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <div class="pdf-info">
+          <div class="pdf-name">${escapeHtml(file.fileName||'constituição do EM')}</div>
+          <div class="pdf-meta">${formatBytes(file.size)}</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        ${previewable ? '<button class="primary-btn" id="constituicao-open-btn">Abrir</button>' : ''}
+        <button id="constituicao-download-btn">Baixar</button>
+        <button id="constituicao-replace-btn">Substituir</button>
+        <button id="constituicao-remove-btn" style="color:var(--danger-light);">Remover</button>
+      </div>
+      <input type="file" id="constituicao-file-input-replace" accept="${DOC_ACCEPT}" style="display:none">
+    `;
+    if (previewable) $('#constituicao-open-btn').addEventListener('click', () => openDocFile(file));
+    $('#constituicao-download-btn').addEventListener('click', () => downloadDataUrl(file.fileData, file.fileName));
+    $('#constituicao-replace-btn').addEventListener('click', () => $('#constituicao-file-input-replace').click());
+    $('#constituicao-file-input-replace').addEventListener('change', async e => {
+      if (!e.target.files[0]) return;
+      const f = e.target.files[0];
+      const dataUrl = await readFileAsDataURL(f);
+      await opRef('constituicaoEM').set({fileName:f.name, size:f.size, fileData:dataUrl, uploadedAt:Date.now()});
+    });
+    $('#constituicao-remove-btn').addEventListener('click', () => {
+      if (confirm('Remover o arquivo da Constituição do EM?')) opRef('constituicaoEM').remove();
+    });
+  }
+}
+$('#btn-constituicao').addEventListener('click', () => { renderConstituicaoModal(); openModal('constituicao-modal'); });
+
 function renderTemaButton(){ /* nothing visual on the pill button itself */ }
 function renderTemaModal(){
   const content = $('#tema-content');
