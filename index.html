@@ -459,6 +459,129 @@
   .doc-group .pdf-upload-zone{padding:16px; font-size:.85rem; margin-bottom:12px;}
   .doc-group .pdf-list{gap:8px;}
 
+  /* ===== Dashboard (Início) ===== */
+  .deadline-badge{
+    display:none;
+    font-size:.82rem;
+    font-weight:700;
+    color:var(--gold-light);
+    background:rgba(201,162,39,.14);
+    border:1px solid var(--gold);
+    padding:5px 12px;
+    border-radius:20px;
+    letter-spacing:.02em;
+    flex:none;
+  }
+  .deadline-badge.show{display:inline-block;}
+  .deadline-badge.overdue{
+    color:var(--danger-light);
+    background:rgba(179,56,44,.14);
+    border-color:var(--danger-light);
+  }
+  .stat-tiles{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+    gap:12px;
+    margin-top:16px;
+  }
+  .stat-tile{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+  }
+  .stat-tile .stat-value{
+    font-size:1.6rem;
+    font-weight:700;
+    color:var(--gold-light);
+    line-height:1.2;
+  }
+  .stat-tile .stat-label{
+    font-size:.78rem;
+    color:var(--text-dim);
+    margin-top:4px;
+  }
+  .progress-row{margin-bottom:14px;}
+  .progress-row:last-child{margin-bottom:0;}
+  .progress-row-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:6px;
+    font-size:.88rem;
+  }
+  .progress-row-head .fase-label{color:var(--text); font-weight:600;}
+  .progress-row-head .fase-count{color:var(--text-dim); font-size:.8rem;}
+  .progress-track{
+    height:8px;
+    border-radius:4px;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    border-radius:4px;
+    background:linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition:width .3s ease;
+  }
+  .progress-fill.complete{background:linear-gradient(90deg, var(--success), var(--success-light));}
+
+  /* ===== Células do EMCj ===== */
+  .celulas-intro{color:var(--text-dim); font-size:.85rem; margin-bottom:16px;}
+  .celula-atribuicoes{
+    list-style:none;
+    padding:0;
+    margin:0 0 16px;
+  }
+  .celula-atribuicoes li{
+    position:relative;
+    padding-left:16px;
+    margin-bottom:6px;
+    font-size:.88rem;
+    color:var(--text-dim);
+    line-height:1.4;
+  }
+  .celula-atribuicoes li::before{
+    content:'';
+    position:absolute;
+    left:0; top:.55em;
+    width:5px; height:5px;
+    border-radius:50%;
+    background:var(--gold);
+  }
+  .celula-produtos-label{
+    font-size:.86rem;
+    font-weight:600;
+    color:var(--gold-light);
+    letter-spacing:.02em;
+    margin-bottom:8px;
+  }
+  textarea.produtos-textarea{
+    width:100%;
+    min-height:90px;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:.9rem;
+    font-family:inherit;
+    resize:vertical;
+    margin-bottom:16px;
+  }
+  textarea.produtos-textarea:focus{outline:none; border-color:var(--gold);}
+  .celula-exame-nested{
+    border-top:1px solid var(--border);
+    padding-top:16px;
+    margin-top:4px;
+  }
+  .celula-exame-nested h4{
+    font-size:.9rem;
+    color:var(--gold-light);
+    margin-bottom:12px;
+  }
+
   #pdf-viewer-overlay .modal-box{max-width:900px;}
   #pdf-viewer-pages{
     max-height:70vh;
@@ -579,17 +702,25 @@
 
 <div class="app-body">
   <nav class="sidebar">
+    <button class="tab-btn active" data-tab="inicio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      Início
+    </button>
     <button class="tab-btn" data-tab="faltas">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
       Controle de Faltas
     </button>
-    <button class="tab-btn active" data-tab="em">
+    <button class="tab-btn" data-tab="em">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Funções do EM
     </button>
     <button class="tab-btn" data-tab="tps">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
       Trabalhos Pedidos
+    </button>
+    <button class="tab-btn" data-tab="celulas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Estado-Maior
     </button>
     <button class="tab-btn" data-tab="manuais">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -598,6 +729,24 @@
   </nav>
 
   <main class="content">
+
+    <section id="tab-inicio" class="tab-panel active">
+      <div class="panel-card">
+        <div class="card-header-row">
+          <h2>Andamento dos Trabalhos</h2>
+          <span class="deadline-badge" id="deadline-badge"></span>
+        </div>
+        <div class="date-row">
+          <label for="prazo-final-input">Prazo final:</label>
+          <input type="date" id="prazo-final-input">
+        </div>
+        <div class="stat-tiles" id="dashboard-tiles"></div>
+      </div>
+      <div class="panel-card">
+        <h2>Exame de Situação Operacional &mdash; por fase</h2>
+        <div id="dashboard-fases"></div>
+      </div>
+    </section>
 
     <section id="tab-faltas" class="tab-panel">
       <div class="panel-card">
@@ -614,7 +763,7 @@
       </div>
     </section>
 
-    <section id="tab-em" class="tab-panel active">
+    <section id="tab-em" class="tab-panel">
       <div class="panel-card">
         <h2>Funções do EM</h2>
         <div id="em-rows"></div>
@@ -641,10 +790,13 @@
           <div class="pdf-list" id="tps-prontos-list"></div>
         </div>
       </div>
+    </section>
 
+    <section id="tab-celulas" class="tab-panel">
       <div class="panel-card">
-        <h2>Exame de Situação Operacional</h2>
-        <div class="accordion" id="exame-accordion"></div>
+        <h2>Estado-Maior Conjunto &mdash; Células</h2>
+        <p class="celulas-intro">Atribuições de cada seção do EMCj e espaço para os chefes registrarem seus principais produtos. A Seção de Operações (D-3) reúne, ainda, os documentos do Exame de Situação Operacional.</p>
+        <div class="accordion" id="celulas-accordion"></div>
       </div>
     </section>
 
@@ -804,7 +956,7 @@ let currentOp = localStorage.getItem('eceme_current_op') || 'hefesto';
 if (!OPS.find(o => o.id === currentOp)) currentOp = 'hefesto';
 
 let activeRefs = [];
-let opState = { em:{}, faltas:{data:'', pessoas:{}}, tema:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{} };
+let opState = { em:{}, faltas:{data:'', pessoas:{}}, tema:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{}, celulas:{}, prazoFinal:'' };
 
 function $(sel, root=document){ return root.querySelector(sel); }
 function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
@@ -868,11 +1020,11 @@ function attachListeners(){
 
   const base = db.ref('operations/' + currentOp);
 
-  const emCb = snap => { opState.em = snap.val() || {}; renderEm(); };
+  const emCb = snap => { opState.em = snap.val() || {}; renderEm(); renderDashboard(); };
   base.child('em').on('value', emCb);
   activeRefs.push({ref: base.child('em'), cb: emCb});
 
-  const faltasCb = snap => { opState.faltas = snap.val() || {data:'', pessoas:{}}; renderFaltas(); };
+  const faltasCb = snap => { opState.faltas = snap.val() || {data:'', pessoas:{}}; renderFaltas(); renderDashboard(); };
   base.child('faltas').on('value', faltasCb);
   activeRefs.push({ref: base.child('faltas'), cb: faltasCb});
 
@@ -903,6 +1055,14 @@ function attachListeners(){
   const exameCb = snap => { opState.exame = snap.val() || {}; renderExame(); };
   base.child('exame').on('value', exameCb);
   activeRefs.push({ref: base.child('exame'), cb: exameCb});
+
+  const celulasCb = snap => { opState.celulas = snap.val() || {}; renderCelulas(); };
+  base.child('celulas').on('value', celulasCb);
+  activeRefs.push({ref: base.child('celulas'), cb: celulasCb});
+
+  const prazoFinalCb = snap => { opState.prazoFinal = snap.val() || ''; renderDashboard(); };
+  base.child('prazoFinal').on('value', prazoFinalCb);
+  activeRefs.push({ref: base.child('prazoFinal'), cb: prazoFinalCb});
 }
 
 function opRef(path){ return db.ref('operations/' + currentOp + '/' + path); }
@@ -1105,7 +1265,7 @@ function renderPdfList(kind){
 
 /* ============ Exame de Situação Operacional ============ */
 const EXAME_FASES = [
-  { id:'fase1', label:'Fase 1', docs:[
+  { id:'fase1', label:'Fase 1 — Avaliação do Ambiente Operacional e Análise da Missão', docs:[
     {key:'diagrama-relacoes-atual',            label:'Diagrama de Relações da Situação Atual'},
     {key:'diagrama-situacao-desejada',          label:'Diagrama da Situação Desejada'},
     {key:'estado-final-desejado-operacional',   label:'Estado Final Desejado Operacional'},
@@ -1113,11 +1273,117 @@ const EXAME_FASES = [
     {key:'objetivos-operacionais',              label:'Objetivos Operacionais'},
     {key:'diplan',                               label:'Diplan'},
   ]},
-  { id:'fase2', label:'Fase 2', docs:[] },
-  { id:'fase3', label:'Fase 3', docs:[] },
-  { id:'fase4', label:'Fase 4', docs:[] },
-  { id:'fase5', label:'Fase 5', docs:[] },
-  { id:'fase6', label:'Fase 6', docs:[] },
+  { id:'fase2', label:'Fase 2 — A Situação e sua Compreensão', docs:[
+    {key:'caracteristicas-area-responsabilidade', label:'Características da Área de Responsabilidade'},
+    {key:'forcas-inimigas',                       label:'Forças Inimigas'},
+    {key:'nossas-forcas',                         label:'Nossas Forças'},
+    {key:'comparacao-poderes-combate',            label:'Comparação de Poderes de Combate (CPC)'},
+    {key:'fatores-forca-fraqueza',                label:'Fatores de Força e Fraqueza (FFF)'},
+    {key:'abordagem-operacional',                 label:'Abordagem Operacional (Desenho Operacional)'},
+    {key:'intencao-comandante',                   label:'Intenção do Comandante'},
+    {key:'necessidades-inteligencia',             label:'Necessidades de Inteligência'},
+    {key:'adequacao-propria-forca',               label:'Determinação Inicial da Adequação da Própria Força'},
+  ]},
+  { id:'fase3', label:'Fase 3 — Possibilidade(s) do Inimigo, Linhas de Ação e Confronto', docs:[
+    {key:'possibilidades-inimigo',    label:'Possibilidades do Inimigo (Psb Ini)'},
+    {key:'linhas-de-acao',            label:'Linhas de Ação (elaboração, representação gráfica e conceito sumário)'},
+    {key:'confronto-linhas-de-acao',  label:'Confronto das Linhas de Ação'},
+  ]},
+  { id:'fase4', label:'Fase 4 — Comparação das Linhas de Ação', docs:[
+    {key:'vantagens-desvantagens', label:'Vantagens e Desvantagens (Matriz de Decisão)'},
+  ]},
+  { id:'fase5', label:'Fase 5 — Decisão', docs:[
+    {key:'decisao-comandante', label:'Decisão do Comandante'},
+  ]},
+  { id:'fase6', label:'Fase 6 — Conceito Preliminar da Operação', docs:[
+    {key:'conceito-preliminar-operacao', label:'Conceito Preliminar da Operação (CPO)'},
+  ]},
+];
+
+const CELULAS = [
+  { id:'d1', codigo:'D-1', nome:'Pessoal', atribuicoes:[
+    'Gestão e controle dos efetivos das forças componentes',
+    'Recompletamento de pessoal e estimativa de perdas em combate',
+    'Moral, disciplina e justiça militar',
+    'Boletins, ordens e histórico de pessoal',
+    'Mão de obra civil (em coordenação com D-2, D-4 e D-9)',
+    'Evacuação, sepultamento e emissão de certidões de óbito',
+    'Anexo de Pessoal ao Plano Operacional',
+  ]},
+  { id:'d2', codigo:'D-2', nome:'Inteligência', atribuicoes:[
+    'Produção de informações e conhecimentos para apoio à decisão',
+    'Necessidades de Inteligência (EEI e ONI)',
+    'Análises de Inteligência e de Contrainteligência',
+    'Ordem de batalha, possibilidades e vulnerabilidades do inimigo',
+    'Lista Integrada de Alvos (LIA) e avaliação de danos',
+    'Arquitetura da rede de Inteligência',
+    'Meteorologia e oceanografia (METOC)',
+    'Anexo de Inteligência ao Plano Operacional',
+  ]},
+  { id:'d3', codigo:'D-3', nome:'Operações', atribuicoes:[
+    'Planejamento, coordenação e integração das ações do Comando Operacional',
+    'Condução do Processo de Planejamento Conjunto (PPC) e consolidação do Exame de Situação Operacional',
+    'Levantamento das Linhas de Ação (LA)',
+    'Registros e relatórios operacionais',
+    'Ordem de Coordenação Preliminar e Sumário de Situação',
+    'Regras de Engajamento',
+    'Subseção de Guerra Cibernética',
+  ]},
+  { id:'d4', codigo:'D-4', nome:'Logística e Mobilização', atribuicoes:[
+    'Análise logística e níveis mínimos de estoque',
+    'Fluxo do apoio logístico e ligação com órgãos apoiadores',
+    'Anexo de Logística e Mobilização ao Plano Operacional',
+    'Recursos e capacidades logísticas das forças em presença',
+    'Normas de evacuação e material salvado/capturado',
+    'Mobilização no âmbito do Comando Operacional',
+    'Lista de Necessidades Complementar (LNC)',
+  ]},
+  { id:'d5', codigo:'D-5', nome:'Planejamento', atribuicoes:[
+    'Auxílio à Seção de Operações na elaboração do Exame de Situação e dos Planos e Ordens',
+    'Proposta do Estado Final Desejado Operacional (EFD Op)',
+    'Identificação dos Objetivos Operacionais e do Desenho Operacional',
+    'Consolidação da LIA e da LIPA, em coordenação com as demais seções',
+    'Matrizes de sincronização da operação/campanha',
+    'Gerenciamento do Risco Operacional (GRO)',
+    'Acompanhamento das operações correntes e futuras',
+  ]},
+  { id:'d6', codigo:'D-6', nome:'Comando e Controle', atribuicoes:[
+    'Análise de Comando e Controle e integração das redes de C²',
+    'Instalação, operação, manutenção e reversão dos sistemas de C²',
+    'Banco de dados do Comando Operacional',
+    'Guerra Eletrônica, em coordenação com as demais seções',
+    'Anexo de C² ao Plano Operacional',
+    'Proteção cibernética dos sistemas de C²',
+  ]},
+  { id:'d7', codigo:'D-7', nome:'Comunicação Social', atribuicoes:[
+    'Parecer sobre as Linhas de Ação sob a ótica da Comunicação Social',
+    'Planejamento e condução das ações de Comunicação Social',
+    'Procedimentos, instalações e porta-vozes para relação com a mídia',
+    'Supervisão do planejamento de Com Soc das Forças Componentes',
+    'Anexo de Comunicação Social ao Plano Operacional',
+  ]},
+  { id:'d8', codigo:'D-8', nome:'Operações de Informação', atribuicoes:[
+    'Análise do ambiente informacional',
+    'Desenvolvimento, revisão e avaliação dos planos de Operações de Informação',
+    'Aspectos políticos, culturais, religiosos e sociais das Op Info',
+    'Coordenação com a Subseção de Guerra Cibernética',
+    'Anexo de Operações de Informação ao Plano Operacional',
+  ]},
+  { id:'d9', codigo:'D-9', nome:'Assuntos Civis', atribuicoes:[
+    'Análise de Assuntos Civis e das implicações das Linhas de Ação na esfera civil',
+    'Planejamento e condução das ações de Assuntos Civis',
+    'Serviços públicos e infraestruturas críticas a preservar na área de operações',
+    'Ligação com autoridades civis locais',
+    'Anexo de Assuntos Civis ao Plano Operacional',
+  ]},
+  { id:'d10', codigo:'D-10', nome:'Administração Financeira', atribuicoes:[
+    'Assessoria orçamentária e financeira ao Comandante Operacional',
+    'Levantamento dos recursos decorrentes das Listas de Necessidades das seções',
+    'Programação orçamentária e financeira no âmbito do Comando Operacional',
+    'Distribuição dos recursos disponíveis às Forças Componentes',
+    'Controle dos registros contábeis e documentos de despesas',
+    'Anexo de Administração Financeira ao Plano Operacional',
+  ]},
 ];
 
 const DOC_EXTENSIONS = ['pdf','jpg','jpeg','png','gif','webp','doc','docx','ppt','pptx'];
@@ -1217,6 +1483,57 @@ function setupDocUploadZone(idSlug, refPath){
   });
 }
 
+function initCelulasAccordion(){
+  const container = $('#celulas-accordion');
+  container.innerHTML = '';
+  CELULAS.forEach(celula => {
+    const item = document.createElement('div');
+    item.className = 'accordion-item';
+    item.dataset.celula = celula.id;
+
+    const atribuicoesHtml = celula.atribuicoes.map(a => `<li>${escapeHtml(a)}</li>`).join('');
+    const exameNestedHtml = celula.id === 'd3' ? `
+      <div class="celula-exame-nested">
+        <h4>Exame de Situação Operacional</h4>
+        <div class="accordion" id="exame-accordion"></div>
+      </div>
+    ` : '';
+
+    item.innerHTML = `
+      <button class="accordion-header" type="button">
+        <span>${celula.codigo} &mdash; ${escapeHtml(celula.nome)}</span>
+        <span class="chevron">&#9660;</span>
+      </button>
+      <div class="accordion-body">
+        <ul class="celula-atribuicoes">${atribuicoesHtml}</ul>
+        <div class="celula-produtos-label">Principais produtos da célula (preenchido pelo chefe)</div>
+        <textarea class="produtos-textarea" id="celula-${celula.id}-produtos" placeholder="Liste aqui os principais produtos desta célula..."></textarea>
+        ${exameNestedHtml}
+      </div>
+    `;
+    container.appendChild(item);
+
+    item.querySelector('.accordion-header').addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+
+    const textarea = item.querySelector('.produtos-textarea');
+    textarea.addEventListener('input', debounce(() => {
+      db.ref('operations/' + currentOp + '/celulas/' + celula.id + '/produtos').set(textarea.value);
+    }, 400));
+  });
+}
+initCelulasAccordion();
+
+function renderCelulas(){
+  CELULAS.forEach(celula => {
+    const textarea = $('#celula-' + celula.id + '-produtos');
+    if (!textarea) return;
+    const value = (opState.celulas[celula.id] || {}).produtos || '';
+    if (document.activeElement !== textarea && textarea.value !== value) textarea.value = value;
+  });
+}
+
 function initExameAccordion(){
   const container = $('#exame-accordion');
   container.innerHTML = '';
@@ -1268,7 +1585,104 @@ function renderExame(){
       renderDocList(listEl, files, 'exame/' + fase.id + '/docs/' + doc.key);
     });
   });
+  renderDashboard();
 }
+
+/* ============ Dashboard (Início) ============ */
+function countExameProgress(){
+  let total = 0, done = 0;
+  const perFase = EXAME_FASES.map(fase => {
+    let faseTotal = 0, faseDone = 0;
+    fase.docs.forEach(doc => {
+      faseTotal++;
+      const files = ((opState.exame[fase.id] || {}).docs || {})[doc.key] || {};
+      if (Object.keys(files).length > 0) faseDone++;
+    });
+    total += faseTotal;
+    done += faseDone;
+    return { label: fase.label, done: faseDone, total: faseTotal };
+  });
+  return { total, done, perFase };
+}
+
+function renderDashboardTiles(){
+  const { total, done } = countExameProgress();
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const emCount = Object.values(opState.em || {}).filter(m => (m.nome || '').trim()).length;
+  const faltasCount = Object.values((opState.faltas || {}).pessoas || {}).filter(p => p.status === 'ausente').length;
+  $('#dashboard-tiles').innerHTML = `
+    <div class="stat-tile">
+      <div class="stat-value">${pct}%</div>
+      <div class="stat-label">Progresso do Exame de Situação</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">${done}/${total}</div>
+      <div class="stat-label">Produtos anexados</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">${emCount}</div>
+      <div class="stat-label">Integrantes do EM cadastrados</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">${faltasCount}</div>
+      <div class="stat-label">Faltas confirmadas</div>
+    </div>
+  `;
+}
+
+function renderDashboardFases(){
+  const { perFase } = countExameProgress();
+  $('#dashboard-fases').innerHTML = perFase.map(f => {
+    const pct = f.total > 0 ? Math.round((f.done / f.total) * 100) : 0;
+    const complete = f.total > 0 && f.done === f.total;
+    return `
+      <div class="progress-row">
+        <div class="progress-row-head">
+          <span class="fase-label">${escapeHtml(f.label)}</span>
+          <span class="fase-count">${f.done}/${f.total}</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill${complete ? ' complete' : ''}" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderDeadline(){
+  const dateInput = $('#prazo-final-input');
+  if (document.activeElement !== dateInput) dateInput.value = opState.prazoFinal || '';
+
+  const badge = $('#deadline-badge');
+  const prazo = opState.prazoFinal;
+  if (!prazo){
+    badge.classList.remove('show', 'overdue');
+    return;
+  }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const deadline = new Date(prazo + 'T00:00:00');
+  const diffDays = Math.round((deadline - today) / (1000 * 60 * 60 * 24));
+  badge.classList.add('show');
+  if (diffDays > 0){
+    badge.textContent = `Faltam ${diffDays} dia${diffDays === 1 ? '' : 's'}`;
+    badge.classList.remove('overdue');
+  } else if (diffDays === 0){
+    badge.textContent = 'Prazo é hoje';
+    badge.classList.remove('overdue');
+  } else {
+    badge.textContent = `Prazo vencido há ${Math.abs(diffDays)} dia${Math.abs(diffDays) === 1 ? '' : 's'}`;
+    badge.classList.add('overdue');
+  }
+}
+
+function renderDashboard(){
+  renderDashboardTiles();
+  renderDashboardFases();
+  renderDeadline();
+}
+$('#prazo-final-input').addEventListener('change', e => {
+  opRef('prazoFinal').set(e.target.value);
+});
+setInterval(renderDeadline, 60 * 1000);
 
 /* ============ TEMA modal ============ */
 function renderTemaButton(){ /* nothing visual on the pill button itself */ }
