@@ -284,6 +284,16 @@
     border-radius:8px;
     font-size:.92rem;
   }
+  .presence-row input[type=date]{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:.92rem;
+    color-scheme:dark;
+  }
+  .presence-row .data-input{flex:0 0 150px;}
   .presence-row .nome-input{flex:2; min-width:160px;}
   .presence-row .funcao-input{flex:1; min-width:130px;}
   .presence-row .motivo-input{flex:1.5; min-width:160px;}
@@ -305,47 +315,13 @@
   .dot-option.absent.selected{background:rgba(179,56,44,.18); border-color:var(--danger-light); color:var(--danger-light);}
   .dot-option.absent.selected .dot{background:var(--danger-light);}
 
-  /* ===== Faltas futuras (grade) ===== */
-  .faltas-grid-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:10px;}
-  .faltas-grid{border-collapse:collapse; width:100%; font-size:.8rem;}
-  .faltas-grid th, .faltas-grid td{
-    border:1px solid var(--border);
-    padding:0;
-    text-align:center;
-    white-space:nowrap;
-  }
-  .faltas-grid thead th{
-    background:var(--panel2);
-    color:var(--text-dim);
-    font-weight:600;
-    padding:8px 6px;
-    font-size:.72rem;
-    line-height:1.3;
-  }
-  .faltas-grid thead th.weekend{color:var(--gold-light);}
-  .faltas-grid td.nome-cell{
-    text-align:left;
-    padding:8px 12px;
-    background:var(--panel2);
-    color:var(--text);
-    font-weight:600;
-    position:sticky;
-    left:0;
-    min-width:140px;
-  }
-  .faltas-grid td.day-cell{
-    width:38px;
-    height:38px;
-    cursor:pointer;
-  }
-  .faltas-grid td.day-cell:hover{background:rgba(201,162,39,.1);}
-  .faltas-grid td.day-cell .cell-dot{
-    width:14px;height:14px;border-radius:50%;
-    margin:0 auto;
-    border:2px solid #555;
-  }
-  .faltas-grid td.day-cell.marked .cell-dot{background:var(--danger-light); border-color:var(--danger-light);}
-  .faltas-grid-empty{color:var(--text-dim); font-size:.85rem; font-style:italic; padding:14px; text-align:left; caption-side:top;}
+  /* ===== Relatório de faltas ===== */
+  .relatorio-list{display:flex; flex-direction:column; gap:10px; margin-top:4px;}
+  .relatorio-item{background:var(--bg-alt); border:1px solid var(--border); border-radius:8px; padding:10px 12px;}
+  .relatorio-nome{font-weight:600; font-size:.92rem;}
+  .relatorio-motivo{color:var(--text-dim); font-size:.82rem; margin-top:2px;}
+  .relatorio-empty{color:var(--text-dim); font-size:.85rem; font-style:italic; margin-top:14px;}
+  .relatorio-summary{color:var(--text-dim); font-size:.85rem; margin:14px 0 10px;}
 
   /* ===== PDF lists ===== */
   .pdf-upload-zone{
@@ -784,18 +760,12 @@
           <span class="faltas-count" id="faltas-count"></span>
         </div>
         <div class="date-row">
-          <label for="faltas-date">Data:</label>
+          <label for="faltas-date">Data de hoje:</label>
           <input type="date" id="faltas-date">
+          <button class="primary-btn" id="btn-relatorio">Gerar relatório</button>
         </div>
         <div id="faltas-rows"></div>
         <button class="add-btn" id="faltas-add">+ Adicionar nome</button>
-      </div>
-      <div class="panel-card">
-        <h2>Faltas futuras</h2>
-        <p class="celulas-intro">Antecipe aqui os dias em que já sabe que vai faltar. Clique numa célula da grade para marcar, informar o motivo ou desmarcar.</p>
-        <div class="faltas-grid-wrap">
-          <table class="faltas-grid" id="faltas-grid"></table>
-        </div>
       </div>
     </section>
 
@@ -876,16 +846,17 @@
   </div>
 </div>
 
-<!-- Falta futura modal -->
-<div class="modal-overlay" id="falta-futura-modal">
+<!-- Relatório de faltas modal -->
+<div class="modal-overlay" id="relatorio-modal">
   <div class="modal-box">
-    <button class="modal-close" data-close="falta-futura-modal">&times;</button>
-    <h3 id="falta-futura-title">Falta futura</h3>
-    <input type="text" id="falta-futura-motivo-input" placeholder="Motivo da falta (opcional)">
-    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-      <button class="primary-btn" id="falta-futura-save-btn">Salvar</button>
-      <button class="icon-btn" id="falta-futura-remove-btn" title="Remover marcação" style="width:auto; padding:0 14px;">Remover marcação</button>
+    <button class="modal-close" data-close="relatorio-modal">&times;</button>
+    <h3>Relatório de faltas</h3>
+    <div class="date-row" style="margin-bottom:14px;">
+      <label for="relatorio-date-input">Dia:</label>
+      <input type="date" id="relatorio-date-input">
     </div>
+    <button class="primary-btn" id="relatorio-gerar-btn">Gerar</button>
+    <div id="relatorio-output"></div>
   </div>
 </div>
 
@@ -1069,11 +1040,23 @@ function migrateEmIntoFaltas(base){
         const [key, p] = match;
         if (!p.funcao && member.funcao) updates[key + '/funcao'] = member.funcao;
       } else {
-        updates[uid()] = { nome, funcao: member.funcao || '', status: null };
+        updates[uid()] = { nome, funcao: member.funcao || '', status: null, data: todayISO() };
       }
     });
     (Object.keys(updates).length > 0 ? base.child('faltas/pessoas').update(updates) : Promise.resolve())
       .then(() => base.child('em').remove());
+  });
+}
+
+/* ============ One-time migration: backfill missing dates on existing faltas rows with today ============ */
+function backfillFaltaDatas(base){
+  base.child('faltas/pessoas').once('value').then(snap => {
+    const pessoas = snap.val() || {};
+    const updates = {};
+    Object.entries(pessoas).forEach(([key, p]) => {
+      if (!p.data) updates[key + '/data'] = todayISO();
+    });
+    if (Object.keys(updates).length > 0) base.child('faltas/pessoas').update(updates);
   });
 }
 
@@ -1085,6 +1068,7 @@ function attachListeners(){
   const base = db.ref('operations/' + currentOp);
 
   migrateEmIntoFaltas(base);
+  backfillFaltaDatas(base);
 
   const faltasCb = snap => { opState.faltas = snap.val() || {data:'', pessoas:{}}; renderFaltas(); renderDashboard(); };
   base.child('faltas').on('value', faltasCb);
@@ -1180,6 +1164,7 @@ function renderFaltas(){
       row.className = 'presence-row';
       row.dataset.rowKey = key;
       row.innerHTML = `
+        <input type="date" class="data-input" data-field="data">
         <input type="text" class="nome-input" placeholder="Nome" data-field="nome">
         <input type="text" class="funcao-input" placeholder="Função" data-field="funcao">
         <div class="dot-option present" data-status="presente"><span class="dot"></span> Estarei presente</div>
@@ -1188,9 +1173,11 @@ function renderFaltas(){
         <button class="icon-btn" title="Remover">&times;</button>
       `;
       container.appendChild(row);
+      const dataInput = row.querySelector('[data-field="data"]');
       const nomeInput = row.querySelector('[data-field="nome"]');
       const funcaoInput = row.querySelector('[data-field="funcao"]');
       const motivoInput = row.querySelector('[data-field="motivo"]');
+      dataInput.addEventListener('change', () => opRef('faltas/pessoas/' + key + '/data').set(dataInput.value));
       nomeInput.addEventListener('input', debounce(() => opRef('faltas/pessoas/' + key + '/nome').set(nomeInput.value), 400));
       funcaoInput.addEventListener('input', debounce(() => opRef('faltas/pessoas/' + key + '/funcao').set(funcaoInput.value), 400));
       motivoInput.addEventListener('input', debounce(() => opRef('faltas/pessoas/' + key + '/motivo').set(motivoInput.value), 400));
@@ -1203,92 +1190,55 @@ function renderFaltas(){
         });
       });
     }
+    const dataInput = row.querySelector('[data-field="data"]');
     const nomeInput = row.querySelector('[data-field="nome"]');
     const funcaoInput = row.querySelector('[data-field="funcao"]');
     const motivoInput = row.querySelector('[data-field="motivo"]');
+    if (document.activeElement !== dataInput && dataInput.value !== (p.data||'')) dataInput.value = p.data||'';
     if (document.activeElement !== nomeInput && nomeInput.value !== (p.nome||'')) nomeInput.value = p.nome||'';
     if (document.activeElement !== funcaoInput && funcaoInput.value !== (p.funcao||'')) funcaoInput.value = p.funcao||'';
     if (document.activeElement !== motivoInput && motivoInput.value !== (p.motivo||'')) motivoInput.value = p.motivo||'';
     row.querySelector('.dot-option.present').classList.toggle('selected', p.status === 'presente');
     row.querySelector('.dot-option.absent').classList.toggle('selected', p.status === 'ausente');
   });
-
-  renderFaltasGrid();
 }
 $('#faltas-add').addEventListener('click', () => {
-  opRef('faltas/pessoas/' + uid()).set({nome:'', funcao:'', status:null, motivo:''});
+  opRef('faltas/pessoas/' + uid()).set({data: todayISO(), nome:'', funcao:'', status:null, motivo:''});
 });
 
 /* ============ Faltas futuras (grade pessoas x dias) ============ */
-const FALTAS_GRID_DAYS = 21;
-let faltaFuturaCtx = null;
+function todayISO(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
 
-function renderFaltasGrid(){
-  const table = $('#faltas-grid');
-  const pessoas = Object.entries(opState.faltas.pessoas || {}).filter(([, p]) => (p.nome || '').trim());
+$('#btn-relatorio').addEventListener('click', () => {
+  $('#relatorio-date-input').value = $('#faltas-date').value || todayISO();
+  $('#relatorio-output').innerHTML = '';
+  openModal('relatorio-modal');
+});
+$('#relatorio-gerar-btn').addEventListener('click', () => {
+  const date = $('#relatorio-date-input').value;
+  if (!date) return;
+  const [y, m, d] = date.split('-');
+  const dateLabel = `${d}/${m}/${y}`;
+  const ausentes = Object.values(opState.faltas.pessoas || {}).filter(p => p.data === date && p.status === 'ausente');
 
-  if (pessoas.length === 0){
-    table.innerHTML = '<caption class="faltas-grid-empty">Adicione nomes acima para ver a grade de faltas futuras.</caption>';
+  if (ausentes.length === 0){
+    $('#relatorio-output').innerHTML = `<p class="relatorio-empty">Nenhuma falta prevista para ${dateLabel}.</p>`;
     return;
   }
-
-  const days = [];
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  for (let i = 0; i < FALTAS_GRID_DAYS; i++){
-    const d = new Date(today);
-    d.setDate(d.getDate() + i);
-    days.push(d);
-  }
-  const weekdayLabels = ['dom','seg','ter','qua','qui','sex','sáb'];
-  const toKey = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-
-  const theadHtml = '<thead><tr><th></th>' + days.map(d => {
-    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
-    return `<th class="${isWeekend ? 'weekend' : ''}">${weekdayLabels[d.getDay()]}<br>${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}</th>`;
-  }).join('') + '</tr></thead>';
-
-  const tbodyHtml = '<tbody>' + pessoas.map(([key, p]) => {
-    const futuras = p.futuras || {};
-    return '<tr>' +
-      `<td class="nome-cell">${escapeHtml(p.nome || '')}</td>` +
-      days.map(d => {
-        const dateKey = toKey(d);
-        const marked = !!futuras[dateKey];
-        const motivo = marked ? (futuras[dateKey].motivo || '') : '';
-        return `<td class="day-cell${marked ? ' marked' : ''}" data-key="${key}" data-date="${dateKey}" title="${escapeHtml(motivo)}"><span class="cell-dot"></span></td>`;
-      }).join('') +
-      '</tr>';
-  }).join('') + '</tbody>';
-
-  $('#faltas-grid').innerHTML = theadHtml + tbodyHtml;
-
-  $all('.day-cell', $('#faltas-grid')).forEach(cell => {
-    cell.addEventListener('click', () => {
-      const key = cell.dataset.key;
-      const date = cell.dataset.date;
-      const p = opState.faltas.pessoas[key] || {};
-      const futuras = p.futuras || {};
-      faltaFuturaCtx = { key, date };
-      const [y, m, d] = date.split('-');
-      $('#falta-futura-title').textContent = `Falta futura — ${(p.nome||'').trim()} — ${d}/${m}/${y}`;
-      $('#falta-futura-motivo-input').value = futuras[date] ? (futuras[date].motivo || '') : '';
-      $('#falta-futura-remove-btn').style.display = futuras[date] ? 'inline-block' : 'none';
-      openModal('falta-futura-modal');
-    });
-  });
-}
-$('#falta-futura-save-btn').addEventListener('click', () => {
-  if (!faltaFuturaCtx) return;
-  const { key, date } = faltaFuturaCtx;
-  opRef(`faltas/pessoas/${key}/futuras/${date}`).set({ motivo: $('#falta-futura-motivo-input').value });
-  closeModal('falta-futura-modal');
-});
-$('#falta-futura-remove-btn').addEventListener('click', () => {
-  if (!faltaFuturaCtx) return;
-  const { key, date } = faltaFuturaCtx;
-  opRef(`faltas/pessoas/${key}/futuras/${date}`).remove();
-  closeModal('falta-futura-modal');
+  $('#relatorio-output').innerHTML = `
+    <p class="relatorio-summary">Faltas previstas para ${dateLabel} (${ausentes.length}):</p>
+    <div class="relatorio-list">
+      ${ausentes.map(p => `
+        <div class="relatorio-item">
+          <div class="relatorio-nome">${escapeHtml(p.nome || '')}${p.funcao ? ' — ' + escapeHtml(p.funcao) : ''}</div>
+          ${p.motivo ? `<div class="relatorio-motivo">Motivo: ${escapeHtml(p.motivo)}</div>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  `;
 });
 
 /* ============ PDF helpers ============ */
