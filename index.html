@@ -185,8 +185,17 @@
     letter-spacing:.01em;
     transition:border-color .15s, box-shadow .15s, transform .1s;
   }
-  .nav-card svg{width:30px;height:30px;flex:none;color:var(--gold);}
+  .nav-card-icon{
+    width:52px; height:52px;
+    border-radius:50%;
+    background:rgba(201,162,39,.12);
+    display:flex; align-items:center; justify-content:center;
+    flex:none;
+    transition:background .15s;
+  }
+  .nav-card-icon svg{width:26px;height:26px;flex:none;color:var(--gold);}
   .nav-card:hover{border-color:var(--gold); box-shadow:0 6px 18px rgba(32,41,28,.08); transform:translateY(-1px);}
+  .nav-card:hover .nav-card-icon{background:rgba(201,162,39,.2);}
   .nav-card:active{transform:scale(.98);}
   .home-section-label{
     text-align:center;
@@ -772,12 +781,25 @@
   @media (max-width: 760px){
     .topbar{padding:12px 56px 6px;}
     .corner-icon{width:34px;}
-    .title-box{min-width:0; width:100%; max-width:320px; padding:12px 18px;}
-    .title-box h1{font-size:1.15rem;}
-    .nav-cards{grid-template-columns:repeat(3, 1fr); gap:8px;}
-    .nav-card{padding:16px 8px; font-size:.74rem; gap:6px;}
-    .nav-card svg{width:22px; height:22px;}
-    .top-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    .title-box{min-width:0; width:auto; max-width:230px; margin:0 auto; padding:10px 22px;}
+    .title-box h1{font-size:1.05rem;}
+    .op-current{font-size:.86rem; padding:2px 6px; gap:6px;}
+
+    /* Home screen: cards settle a bit lower than the header, quick-link buttons anchor to the bottom of the screen */
+    .home-screen{
+      display:flex;
+      flex-direction:column;
+      min-height:calc(100vh - 132px);
+      min-height:calc(100dvh - 132px);
+      padding-top:30px;
+    }
+    .nav-cards{grid-template-columns:repeat(2, 1fr); gap:12px;}
+    .nav-card:last-child{grid-column:1 / -1;}
+    .nav-card{padding:22px 14px; font-size:.82rem; gap:10px;}
+    .nav-card-icon{width:46px; height:46px;}
+    .nav-card-icon svg{width:23px; height:23px;}
+    .home-section-label{margin-top:auto; margin-bottom:10px;}
+    .top-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 0 6px;}
     .top-actions button{border-radius:10px; padding:10px 12px; font-size:.82rem; text-align:center;}
     .panel-card{padding:16px;}
   }
@@ -814,23 +836,23 @@
 <div id="home-screen" class="home-screen">
   <nav class="nav-cards">
     <button class="nav-card" data-tab="inicio">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      <span class="nav-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg></span>
       Controle da Operação
     </button>
     <button class="nav-card" data-tab="tps">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+      <span class="nav-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="7" y="3" width="10" height="4" rx="1"/><path d="M17 5h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h1"/><path d="M9 12h6M9 16h6"/></svg></span>
       Trabalhos Pedidos
     </button>
     <button class="nav-card" data-tab="celulas">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="nav-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="9" y="3" width="6" height="5" rx="1.2"/><rect x="3" y="16" width="6" height="5" rx="1.2"/><rect x="15" y="16" width="6" height="5" rx="1.2"/><path d="M12 8v3M6 16v-1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg></span>
       Células do Estado-Maior
     </button>
     <button class="nav-card" data-tab="controle-em">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+      <span class="nav-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M15.5 21v-2a4 4 0 0 0-4-4h-4a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="m16.5 11 2 2 4-4"/></svg></span>
       Controle ADM do EM
     </button>
     <button class="nav-card" data-tab="manuais">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span class="nav-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 4.5h6a3.5 3.5 0 0 1 3.5 3.5v12a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4.5h-6A3.5 3.5 0 0 0 12.5 8v12a2.5 2.5 0 0 1 2.5-2.5h7z"/></svg></span>
       Principais manuais
     </button>
   </nav>
