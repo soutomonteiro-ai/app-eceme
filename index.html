@@ -594,7 +594,6 @@
     border-radius:10px;
     padding:12px 14px;
     margin-bottom:10px;
-    cursor:pointer;
     transition:border-color .15s;
   }
   .progress-row:hover{border-color:var(--gold);}
@@ -606,6 +605,7 @@
     gap:10px;
     margin-bottom:8px;
     font-size:.88rem;
+    cursor:pointer;
   }
   .progress-row-head .fase-label{color:var(--text); font-weight:600; display:flex; align-items:center; gap:8px;}
   .progress-row-head .fase-label .chevron{color:var(--gold); font-size:.75rem; transition:transform .2s; flex:none;}
@@ -625,6 +625,37 @@
     transition:width .3s ease;
   }
   .progress-fill.complete{background:linear-gradient(90deg, var(--success), var(--success-light));}
+
+  /* ===== Fase deadline control (shared per fase, editable in the célula boxes and here) ===== */
+  .fase-prazo-row{
+    display:flex; align-items:center; flex-wrap:wrap; gap:8px;
+    margin-top:10px;
+    font-size:.8rem;
+  }
+  .fase-prazo-row label{color:var(--text-dim); flex:none;}
+  .fase-prazo-row input[type=date]{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:6px 9px;
+    border-radius:7px;
+    font-size:.82rem;
+    color-scheme:light;
+  }
+  .fase-prazo-countdown{
+    font-size:.74rem;
+    font-weight:700;
+    color:var(--gold-light);
+    background:rgba(201,162,39,.14);
+    border:1px solid var(--gold);
+    padding:3px 10px;
+    border-radius:20px;
+    letter-spacing:.02em;
+  }
+  .fase-prazo-countdown:empty{display:none;}
+  .fase-prazo-countdown.overdue{color:var(--danger-light); background:rgba(179,56,44,.14); border-color:var(--danger-light);}
+  .fase-block .fase-prazo-row{margin:6px 0 12px; padding-bottom:12px; border-bottom:1px dashed var(--border);}
+
   .fase-detail{display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);}
   .progress-row.open .fase-detail{display:flex; flex-direction:column; gap:6px;}
   .fase-detail-item{
@@ -1136,7 +1167,7 @@ let currentOp = localStorage.getItem('eceme_current_op') || 'hefesto';
 if (!OPS.find(o => o.id === currentOp)) currentOp = 'hefesto';
 
 let activeRefs = [];
-let opState = { faltas:{data:'', pessoas:{}}, tema:null, constituicaoEM:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{}, celulas:{}, prazoFinal:'' };
+let opState = { faltas:{data:'', pessoas:{}}, tema:null, constituicaoEM:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{}, celulas:{}, prazoFinal:'', fasePrazos:{} };
 
 function $(sel, root=document){ return root.querySelector(sel); }
 function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
@@ -1278,6 +1309,10 @@ function attachListeners(){
   const prazoFinalCb = snap => { opState.prazoFinal = snap.val() || ''; renderDashboard(); };
   base.child('prazoFinal').on('value', prazoFinalCb);
   activeRefs.push({ref: base.child('prazoFinal'), cb: prazoFinalCb});
+
+  const fasePrazosCb = snap => { opState.fasePrazos = snap.val() || {}; syncFasePrazoInputs(); };
+  base.child('fasePrazos').on('value', fasePrazosCb);
+  activeRefs.push({ref: base.child('fasePrazos'), cb: fasePrazosCb});
 }
 
 /* ============ Global listeners (shared across all operations) ============ */
@@ -1772,6 +1807,10 @@ function initCelulasAccordion(){
       return `
         <div class="fase-block" data-fase="${fase.id}">
           <div class="fase-block-title">${escapeHtml(fase.label)}</div>
+          <div class="fase-prazo-row">
+            <label for="fase-prazo-${celula.id}-${fase.id}">Prazo da fase (Comandante):</label>
+            <input type="date" class="fase-prazo-input" id="fase-prazo-${celula.id}-${fase.id}" data-fase="${fase.id}">
+          </div>
           ${textoHtml}
           ${ownedDocsHtml}
           ${genericHtml}
@@ -1802,6 +1841,7 @@ function initCelulasAccordion(){
       if (celulaHasGenericZone(celula, fase.id)){
         setupDocUploadZone('celula-' + celula.id + '-' + fase.id, 'celulas/' + celula.id + '/fases/' + fase.id + '/docs');
       }
+      wireFasePrazoInput($('#fase-prazo-' + celula.id + '-' + fase.id));
     });
   });
 }
@@ -1888,7 +1928,9 @@ let expandedFases = new Set();
 
 function renderDashboardFases(){
   const { perFase } = countExameProgress();
-  $('#dashboard-fases').innerHTML = perFase.map(f => {
+  const container = $('#dashboard-fases');
+
+  perFase.forEach(f => {
     const pct = f.total > 0 ? Math.round((f.done / f.total) * 100) : 0;
     const complete = f.total > 0 && f.done === f.total;
     const detailHtml = f.items.map(i => `
@@ -1898,25 +1940,52 @@ function renderDashboardFases(){
         <span class="fase-detail-status">${i.done ? 'Enviado' : 'Pendente'}</span>
       </div>
     `).join('');
-    return `
-      <div class="progress-row${expandedFases.has(f.id) ? ' open' : ''}" data-fase="${f.id}">
+
+    let row = container.querySelector(`.progress-row[data-fase="${f.id}"]`);
+    if (!row){
+      row = document.createElement('div');
+      row.className = 'progress-row';
+      row.dataset.fase = f.id;
+      row.innerHTML = `
         <div class="progress-row-head">
           <span class="fase-label"><span class="chevron">&#9660;</span>${escapeHtml(f.label)}</span>
-          <span class="fase-count">${f.done}/${f.total}</span>
+          <span class="fase-count"></span>
         </div>
-        <div class="progress-track"><div class="progress-fill${complete ? ' complete' : ''}" style="width:${pct}%"></div></div>
-        <div class="fase-detail">${detailHtml}</div>
-      </div>
-    `;
-  }).join('');
-  $all('.progress-row', $('#dashboard-fases')).forEach(row => {
-    row.addEventListener('click', () => {
-      const faseId = row.dataset.fase;
-      if (expandedFases.has(faseId)) expandedFases.delete(faseId);
-      else expandedFases.add(faseId);
-      row.classList.toggle('open');
-    });
+        <div class="progress-track"><div class="progress-fill"></div></div>
+        <div class="fase-prazo-row">
+          <label for="dash-fase-prazo-${f.id}">Prazo da fase (Comandante):</label>
+          <input type="date" class="fase-prazo-input" id="dash-fase-prazo-${f.id}" data-fase="${f.id}">
+          <span class="fase-prazo-countdown" data-fase="${f.id}"></span>
+        </div>
+        <div class="fase-detail"></div>
+      `;
+      container.appendChild(row);
+      row.querySelector('.progress-row-head').addEventListener('click', () => {
+        if (expandedFases.has(f.id)) expandedFases.delete(f.id);
+        else expandedFases.add(f.id);
+        row.classList.toggle('open');
+      });
+      wireFasePrazoInput(row.querySelector('.fase-prazo-input'));
+    }
+    row.classList.toggle('open', expandedFases.has(f.id));
+    row.querySelector('.fase-count').textContent = `${f.done}/${f.total}`;
+    const fill = row.querySelector('.progress-fill');
+    fill.style.width = pct + '%';
+    fill.classList.toggle('complete', complete);
+    row.querySelector('.fase-detail').innerHTML = detailHtml;
   });
+}
+
+function deadlineStatus(prazo){
+  if (!prazo) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const deadline = new Date(prazo + 'T00:00:00');
+  if (isNaN(deadline.getTime())) return null;
+  const diffDays = Math.round((deadline - today) / (1000 * 60 * 60 * 24));
+  if (diffDays > 0) return { text: `Faltam ${diffDays} dia${diffDays === 1 ? '' : 's'}`, overdue:false };
+  if (diffDays === 0) return { text: 'Prazo é hoje', overdue:false };
+  return { text: `Prazo vencido há ${Math.abs(diffDays)} dia${Math.abs(diffDays) === 1 ? '' : 's'}`, overdue:true };
 }
 
 function renderDeadline(){
@@ -1924,37 +1993,43 @@ function renderDeadline(){
   if (document.activeElement !== dateInput) dateInput.value = opState.prazoFinal || '';
 
   const badge = $('#deadline-badge');
-  const prazo = opState.prazoFinal;
-  if (!prazo){
+  const status = deadlineStatus(opState.prazoFinal);
+  if (!status){
     badge.classList.remove('show', 'overdue');
     return;
   }
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const deadline = new Date(prazo + 'T00:00:00');
-  const diffDays = Math.round((deadline - today) / (1000 * 60 * 60 * 24));
   badge.classList.add('show');
-  if (diffDays > 0){
-    badge.textContent = `Faltam ${diffDays} dia${diffDays === 1 ? '' : 's'}`;
-    badge.classList.remove('overdue');
-  } else if (diffDays === 0){
-    badge.textContent = 'Prazo é hoje';
-    badge.classList.remove('overdue');
-  } else {
-    badge.textContent = `Prazo vencido há ${Math.abs(diffDays)} dia${Math.abs(diffDays) === 1 ? '' : 's'}`;
-    badge.classList.add('overdue');
-  }
+  badge.textContent = status.text;
+  badge.classList.toggle('overdue', status.overdue);
+}
+
+/* ============ Fase deadlines (shared by all sections working the same fase) ============ */
+function syncFasePrazoInputs(){
+  const prazos = opState.fasePrazos || {};
+  $all('.fase-prazo-input').forEach(input => {
+    const val = prazos[input.dataset.fase] || '';
+    if (document.activeElement !== input && input.value !== val) input.value = val;
+  });
+  $all('.fase-prazo-countdown').forEach(el => {
+    const status = deadlineStatus(prazos[el.dataset.fase]);
+    el.textContent = status ? status.text : '';
+    el.classList.toggle('overdue', !!(status && status.overdue));
+  });
+}
+function wireFasePrazoInput(input){
+  input.addEventListener('change', () => opRef('fasePrazos/' + input.dataset.fase).set(input.value));
 }
 
 function renderDashboard(){
   renderDashboardTiles();
   renderDashboardFases();
   renderDeadline();
+  syncFasePrazoInputs();
 }
 $('#prazo-final-input').addEventListener('change', e => {
   opRef('prazoFinal').set(e.target.value);
 });
-setInterval(renderDeadline, 60 * 1000);
+setInterval(() => { renderDeadline(); syncFasePrazoInputs(); }, 60 * 1000);
 
 /* ============ TEMA modal ============ */
 /* ============ Constituição do EM modal ============ */
