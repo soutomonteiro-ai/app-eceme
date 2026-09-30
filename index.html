@@ -1560,11 +1560,13 @@ const EXAME_FASES = [
     {key:'estado-final-desejado-operacional',   label:'Estado Final Desejado Operacional', owner:'d5'},
     {key:'problema',                            label:'Problema', owner:'d5'},
     {key:'objetivos-operacionais',              label:'Objetivos Operacionais', owner:'d5'},
-    {key:'diplan',                               label:'Diplan'},
+    {key:'enunciado-missao',                    label:'Enunciado da Missão'},
+    {key:'limitacoes-planejamento',             label:'Limitações ao Planejamento'},
   ]},
   { id:'fase2', label:'Fase 2 — A Situação e sua Compreensão', docs:[
     {key:'caracteristicas-area-responsabilidade', label:'Características da Área de Responsabilidade', owner:'d2'},
     {key:'forcas-inimigas',                       label:'Forças Inimigas', owner:'d2'},
+    {key:'centros-gravidade',                     label:'Identificação e Análise dos Centros de Gravidade', owner:'d2'},
     {key:'nossas-forcas',                         label:'Nossas Forças'},
     {key:'comparacao-poderes-combate',            label:'Comparação de Poderes de Combate (CPC)'},
     {key:'fatores-forca-fraqueza',                label:'Fatores de Força e Fraqueza (FFF)'},
@@ -1601,7 +1603,6 @@ const CELULAS = [
   { id:'d2', codigo:'D-2', nome:'Inteligência',
     resumo:'Coordenação da produção de informações e conhecimentos para apoio à decisão do Comandante; proposição das Necessidades de Inteligência (NI) em todas as fases da operação; avaliação de danos aos sistemas de alvos; supervisão da contrainteligência; arquitetura da rede de Inteligência (coord. D-6); e meteorologia e oceanografia (METOC).',
     fases:{
-      fase2:'Mantém atualizada a Ordem de Batalha do inimigo e o mapa de situação, e elabora as Análises de Inteligência e de Contrainteligência.',
       fase3:'Levanta as Possibilidades do Inimigo (Psb Ini), identificando vulnerabilidades e ameaças prováveis para a operação.',
       fase6:'Confecciona o Anexo de Inteligência e seus apêndices ao Plano Operacional.',
     },
