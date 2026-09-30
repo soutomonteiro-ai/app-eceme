@@ -1,12 +1,12 @@
-const CACHE_NAME = 'app-eceme-v24';
+const CACHE_NAME = 'app-eceme-v25';
 const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
   './assets/eceme-icon.png',
-  './assets/op-hefesto-icon.png',
-  './assets/op-spartacus-icon.png',
-  './assets/op-azuver-icon.png',
+  './assets/egn-icon.png',
+  './assets/ecemar-icon.png',
+  './assets/op-azuver-emblem.png',
   './icons/icon-32.png',
   './icons/icon-120.png',
   './icons/icon-152.png',

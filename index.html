@@ -45,21 +45,28 @@
     display:flex;
     align-items:flex-start;
     justify-content:center;
-    padding:18px 100px 10px;
+    padding:18px 230px 10px;
     gap:16px;
     flex-wrap:wrap;
   }
-  .corner-icon{
+  .crest-group{
     position:absolute;
-    top:14px;
-    width:64px;
-    height:auto;
-    max-height:80px;
-    object-fit:contain;
-    filter:drop-shadow(0 2px 6px rgba(32,41,28,.18));
+    top:12px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    height:72px;
   }
-  .corner-icon.left{left:14px;}
-  .corner-icon.right{right:14px;}
+  .crest-group.left{left:18px;}
+  .crest-group.right{right:18px;}
+  .crest{
+    display:block;
+    height:64px;
+    width:auto;
+    object-fit:contain;
+    filter:drop-shadow(0 2px 5px rgba(32,41,28,.20));
+  }
+  .crest-op{height:72px;}
 
   .title-box{
     background:var(--panel);
@@ -76,56 +83,6 @@
     color:var(--gold-light);
     text-transform:uppercase;
   }
-  .op-selector{position:relative; margin-top:8px;}
-  .op-current{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    cursor:pointer;
-    color:var(--text-dim);
-    font-size:.95rem;
-    padding:4px 10px;
-    border-radius:8px;
-    transition:background .15s;
-  }
-  .op-current:hover{background:var(--panel2);}
-  .op-current .chevron{
-    display:inline-block;
-    transition:transform .2s;
-    color:var(--gold);
-    font-size:.8rem;
-  }
-  .op-selector.open .chevron{transform:rotate(180deg);}
-  .op-dropdown{
-    position:absolute;
-    top:100%;
-    left:50%;
-    transform:translateX(-50%);
-    margin-top:6px;
-    background:var(--panel2);
-    border:1px solid var(--border);
-    border-radius:10px;
-    overflow:hidden;
-    display:none;
-    z-index:50;
-    min-width:200px;
-    box-shadow:0 10px 26px rgba(32,41,28,.14);
-  }
-  .op-selector.open .op-dropdown{display:block;}
-  .op-dropdown button{
-    display:block;
-    width:100%;
-    text-align:left;
-    padding:10px 16px;
-    background:none;
-    border:none;
-    color:var(--text);
-    cursor:pointer;
-    font-size:.92rem;
-  }
-  .op-dropdown button:hover{background:var(--olive);}
-  .op-dropdown button.active{color:var(--gold-light); font-weight:600;}
 
   /* ===== Top action buttons ===== */
   .top-actions{
@@ -842,11 +799,21 @@
   }
 
   @media (max-width: 760px){
-    .topbar{padding:12px 56px 6px;}
-    .corner-icon{width:34px;}
+    .topbar{
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:center;
+      row-gap:10px;
+      padding:12px 16px 6px;
+    }
+    .crest-group{position:static; height:auto; gap:10px;}
+    .crest-group.left{grid-column:1; grid-row:1; justify-self:start;}
+    .crest-group.right{grid-column:2; grid-row:1; justify-self:end;}
+    .crest{height:40px;}
+    .crest-op{height:44px;}
+    .title-box{grid-column:1 / -1; grid-row:2; justify-self:center;}
     .title-box{min-width:0; width:auto; max-width:230px; margin:0 auto; padding:10px 22px;}
     .title-box h1{font-size:1.05rem;}
-    .op-current{font-size:.86rem; padding:2px 6px; gap:6px;}
 
     /* Home screen: cards settle a bit lower than the header, quick-link buttons anchor to the bottom of the screen */
     .home-screen{
@@ -868,8 +835,9 @@
   }
 
   @media (max-width: 420px){
-    .topbar{padding:10px 46px 4px;}
-    .corner-icon{width:28px;}
+    .topbar{padding:10px 14px 4px;}
+    .crest{height:36px;}
+    .crest-op{height:40px;}
     .title-box h1{font-size:1rem;}
     .presence-row .data-input{flex-basis:100%;}
   }
@@ -878,22 +846,17 @@
 <body>
 
 <header class="topbar">
-  <img class="corner-icon left" src="assets/eceme-icon.png" alt="Símbolo ECEME">
-  <div class="title-box">
-    <div class="op-selector" id="op-selector">
-      <div class="op-current" id="op-current-btn">
-        <h1 id="op-current-label">Op HEFESTO</h1>
-        <span class="chevron">&#9660;</span>
-      </div>
-      <div class="op-dropdown" id="op-dropdown">
-        <button data-op="hefesto">Op HEFESTO</button>
-        <button data-op="spartacus">Op SPARTACUS</button>
-        <button data-op="azuver">AZUVER</button>
-        <button data-op="epeo">EPEO</button>
-      </div>
-    </div>
+  <div class="crest-group left">
+    <img class="crest" src="assets/egn-icon.png" alt="Símbolo da EGN">
+    <img class="crest" src="assets/eceme-icon.png" alt="Símbolo da ECEME">
+    <img class="crest" src="assets/ecemar-icon.png" alt="Símbolo da ECEMAR">
   </div>
-  <img class="corner-icon right" id="op-badge-icon" src="assets/op-hefesto-icon.png" alt="Símbolo da Operação">
+  <div class="title-box">
+    <h1 id="op-current-label">AZUVER</h1>
+  </div>
+  <div class="crest-group right">
+    <img class="crest crest-op" src="assets/op-azuver-emblem.png" alt="Símbolo da Operação AZUVER">
+  </div>
 </header>
 
 <div id="home-screen" class="home-screen">
@@ -1188,15 +1151,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-const OPS = [
-  {id:'hefesto',   label:'Op HEFESTO',   icon:'assets/op-hefesto-icon.png'},
-  {id:'spartacus', label:'Op SPARTACUS', icon:'assets/op-spartacus-icon.png'},
-  {id:'azuver',    label:'AZUVER',       icon:'assets/op-azuver-icon.png'},
-  {id:'epeo',      label:'EPEO',         icon:'assets/eceme-icon.png'},
-];
-
-let currentOp = localStorage.getItem('eceme_current_op') || 'hefesto';
-if (!OPS.find(o => o.id === currentOp)) currentOp = 'hefesto';
+const currentOp = 'azuver';
 
 let activeRefs = [];
 let opState = { faltas:{data:'', pessoas:{}}, tema:null, constituicaoEM:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{}, celulas:{}, prazoFinal:'', fasePrazos:{} };
@@ -1216,46 +1171,13 @@ function setSyncStatus(online){
 /* ============ Auth ============ */
 auth.onAuthStateChanged(user => {
   if (user) {
-    initOperationUI();
-    switchOperation(currentOp, true);
+    attachListeners();
     attachGlobalListeners();
   }
 });
 auth.signInAnonymously().catch(err => console.error('Erro de autenticação', err));
 
 db.ref('.info/connected').on('value', snap => setSyncStatus(snap.val() === true));
-
-/* ============ Operation selector ============ */
-function initOperationUI(){
-  const selector = $('#op-selector');
-  const currentBtn = $('#op-current-btn');
-  currentBtn.addEventListener('click', () => selector.classList.toggle('open'));
-  document.addEventListener('click', e => {
-    if (!selector.contains(e.target)) selector.classList.remove('open');
-  });
-  $all('#op-dropdown button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      switchOperation(btn.dataset.op);
-      selector.classList.remove('open');
-    });
-  });
-  updateOperationLabel();
-}
-
-function updateOperationLabel(){
-  const op = OPS.find(o => o.id === currentOp);
-  $('#op-current-label').textContent = op.label;
-  $('#op-badge-icon').src = op.icon;
-  $('#op-badge-icon').alt = 'Símbolo de ' + op.label;
-  $all('#op-dropdown button').forEach(b => b.classList.toggle('active', b.dataset.op === currentOp));
-}
-
-function switchOperation(opId, silent){
-  currentOp = opId;
-  localStorage.setItem('eceme_current_op', opId);
-  updateOperationLabel();
-  attachListeners();
-}
 
 /* ============ One-time migration: old "Funções do EM" list into Controle do EM roster ============ */
 function migrateEmIntoFaltas(base){
@@ -1359,13 +1281,11 @@ function attachGlobalListeners(){
 
 /* ============ One-time migration: per-operation "manuais" into the shared global list ============ */
 function migrateManuaisToGlobal(){
-  OPS.forEach(op => {
-    const ref = db.ref('operations/' + op.id + '/manuais');
-    ref.once('value').then(snap => {
-      const entries = snap.val();
-      if (!entries) return;
-      db.ref('manuais').update(entries).then(() => ref.remove());
-    });
+  const ref = db.ref('operations/' + currentOp + '/manuais');
+  ref.once('value').then(snap => {
+    const entries = snap.val();
+    if (!entries) return;
+    db.ref('manuais').update(entries).then(() => ref.remove());
   });
 }
 
