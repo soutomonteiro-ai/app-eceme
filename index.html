@@ -672,7 +672,39 @@
     min-width:34px;
     padding-top:1px;
   }
-  .fase-detail-item .fase-detail-label{flex:1; color:var(--text-dim); line-height:1.4;}
+  .fase-detail-item .fase-detail-body{flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;}
+  .fase-detail-item .fase-detail-label{color:var(--text-dim); line-height:1.4;}
+  .fase-detail-files{display:flex; flex-direction:column; gap:5px;}
+  .fase-detail-file{
+    display:flex; align-items:center; gap:8px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-left:3px solid var(--gold);
+    border-radius:7px;
+    padding:5px 6px 5px 9px;
+  }
+  .fase-detail-file .pdf-icon{color:var(--gold); flex:none;}
+  .fase-detail-file-name{flex:1; min-width:0; font-weight:600; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .fase-detail-file-meta{flex:none; font-size:.72rem; color:var(--text-dim);}
+  .fase-detail-file-actions{flex:none; display:flex; gap:5px;}
+  .fase-detail-file-actions button{
+    background:var(--olive);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:4px 9px;
+    border-radius:6px;
+    font-size:.74rem;
+    cursor:pointer;
+  }
+  .fase-detail-file-actions button:hover{background:var(--olive-light);}
+  @media (max-width:760px){
+    .fase-detail-item{flex-wrap:wrap; row-gap:4px;}
+    .fase-detail-item .fase-detail-status{margin-left:auto;}
+    .fase-detail-item .fase-detail-body{order:3; flex-basis:100%;}
+    .fase-detail-file{flex-wrap:wrap; row-gap:6px;}
+    .fase-detail-file-name{white-space:normal; overflow-wrap:anywhere; flex-basis:calc(100% - 30px);}
+    .fase-detail-file-actions{margin-left:auto;}
+  }
   .fase-detail-item .fase-detail-status{flex:none; font-weight:600; padding-top:1px;}
   .fase-detail-item.done .fase-detail-status{color:var(--success-light);}
   .fase-detail-item.pending .fase-detail-status{color:var(--text-dim);}
@@ -1876,6 +1908,10 @@ function renderExame(){
 }
 
 /* ============ Dashboard (Início) ============ */
+function sortedFiles(files){
+  return Object.values(files || {}).sort((a,b) => (a.uploadedAt||0)-(b.uploadedAt||0));
+}
+
 function countExameProgress(){
   let total = 0, done = 0;
   const perFase = EXAME_FASES.map(fase => {
@@ -1883,13 +1919,13 @@ function countExameProgress(){
     CELULAS.forEach(celula => {
       fase.docs.filter(doc => docOwner(doc) === celula.id).forEach(doc => {
         const files = ((opState.exame[fase.id] || {}).docs || {})[doc.key] || {};
-        const fileList = Object.values(files);
-        items.push({ celula: celula.codigo, label: doc.label, done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
+        const fileList = sortedFiles(files);
+        items.push({ celula: celula.codigo, label: doc.label, done: fileList.length > 0, files: fileList });
       });
       if (celulaHasGenericZone(celula, fase.id)){
         const files = (((opState.celulas[celula.id] || {}).fases || {})[fase.id] || {}).docs || {};
-        const fileList = Object.values(files);
-        items.push({ celula: celula.codigo, label: celula.fases[fase.id], done: fileList.length > 0, fileNames: fileList.map(f => f.fileName) });
+        const fileList = sortedFiles(files);
+        items.push({ celula: celula.codigo, label: celula.fases[fase.id], done: fileList.length > 0, files: fileList });
       }
     });
     const faseDone = items.filter(i => i.done).length;
@@ -1927,10 +1963,41 @@ function renderDashboardTiles(){
 }
 
 let expandedFases = new Set();
+let dashboardFiles = [];
+
+function dashboardFileHtml(file){
+  const idx = dashboardFiles.push(file) - 1;
+  const ext = getExt(file.fileName);
+  const previewable = ext === 'pdf' || IMAGE_EXTENSIONS.includes(ext);
+  return `
+        <div class="fase-detail-file">
+          <svg class="pdf-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          <span class="fase-detail-file-name" title="${escapeHtml(file.fileName||'documento')}">${escapeHtml(file.fileName||'documento')}</span>
+          <span class="fase-detail-file-meta">${formatBytes(file.size)}</span>
+          <span class="fase-detail-file-actions">
+            ${previewable ? `<button type="button" data-dash-open="${idx}">Abrir</button>` : ''}
+            <button type="button" data-dash-download="${idx}">Baixar</button>
+          </span>
+        </div>`;
+}
 
 function renderDashboardFases(){
   const { perFase } = countExameProgress();
   const container = $('#dashboard-fases');
+  dashboardFiles = [];
+
+  if (!container.dataset.filesWired){
+    container.dataset.filesWired = '1';
+    container.addEventListener('click', e => {
+      const openBtn = e.target.closest('[data-dash-open]');
+      const dlBtn = e.target.closest('[data-dash-download]');
+      if (openBtn) openDocFile(dashboardFiles[openBtn.dataset.dashOpen]);
+      if (dlBtn){
+        const file = dashboardFiles[dlBtn.dataset.dashDownload];
+        downloadDataUrl(file.fileData, file.fileName);
+      }
+    });
+  }
 
   perFase.forEach(f => {
     const pct = f.total > 0 ? Math.round((f.done / f.total) * 100) : 0;
@@ -1938,7 +2005,10 @@ function renderDashboardFases(){
     const detailHtml = f.items.map(i => `
       <div class="fase-detail-item ${i.done ? 'done' : 'pending'}">
         <span class="fase-detail-celula">${escapeHtml(i.celula)}</span>
-        <span class="fase-detail-label">${escapeHtml(i.label)}${i.fileNames.length ? ' — ' + escapeHtml(i.fileNames.join(', ')) : ''}</span>
+        <div class="fase-detail-body">
+          <span class="fase-detail-label">${escapeHtml(i.label)}</span>
+          ${i.files.length ? `<div class="fase-detail-files">${i.files.map(dashboardFileHtml).join('')}</div>` : ''}
+        </div>
         <span class="fase-detail-status">${i.done ? 'Enviado' : 'Pendente'}</span>
       </div>
     `).join('');
