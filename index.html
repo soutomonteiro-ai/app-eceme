@@ -666,6 +666,118 @@
   .fase-detail-item.done .fase-detail-status{color:var(--success-light);}
   .fase-detail-item.pending .fase-detail-status{color:var(--text-dim);}
 
+  /* ===== Product management (Controle da Operação) ===== */
+  .prod-legend{
+    display:flex; flex-wrap:wrap; gap:8px;
+    margin:-6px 0 16px;
+  }
+  .prod-legend-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:.74rem; font-weight:600;
+    color:var(--text-dim);
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:4px 11px 4px 5px;
+  }
+  .prod-legend-chip .prod-btn{width:22px; height:22px; pointer-events:none;}
+  .prod-legend-chip .prod-btn svg{width:12px; height:12px;}
+  .prod-toolbar{
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px 12px;
+    padding:0 2px 4px;
+  }
+  .prod-toolbar-title{
+    font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--gold-light);
+  }
+  .prod-toolbar-hint{font-size:.72rem; color:var(--text-dim); font-style:italic;}
+  .prod-actions{flex:none; display:flex; gap:4px; align-self:center;}
+  .prod-btn{
+    width:30px; height:30px;
+    display:inline-flex; align-items:center; justify-content:center;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--panel);
+    color:var(--text-dim);
+    cursor:pointer;
+    padding:0;
+    transition:background .15s, color .15s, border-color .15s, transform .1s;
+  }
+  .prod-btn svg{width:15px; height:15px;}
+  .prod-btn:active:not(:disabled){transform:scale(.94);}
+  .prod-btn:disabled{opacity:.35; cursor:default;}
+  .prod-btn-move:hover:not(:disabled){background:var(--olive); color:var(--text); border-color:var(--olive-light);}
+  .prod-btn-edit{color:var(--gold-light); border-color:rgba(201,162,39,.55); background:rgba(201,162,39,.08);}
+  .prod-btn-edit:hover{background:var(--gold); color:#1a1a1a; border-color:var(--gold);}
+  .prod-btn-remove{color:var(--danger-light); border-color:rgba(179,56,44,.4); background:rgba(179,56,44,.06);}
+  .prod-btn-remove:hover{background:var(--danger); color:#fff; border-color:var(--danger);}
+  .fase-detail-item .fase-detail-status{
+    font-size:.7rem; letter-spacing:.03em;
+    padding:3px 9px; border-radius:20px;
+    align-self:center;
+  }
+  .fase-detail-item.done .fase-detail-status{background:rgba(46,125,50,.12); border:1px solid rgba(46,125,50,.35);}
+  .fase-detail-item.pending .fase-detail-status{background:var(--panel2); border:1px solid var(--border);}
+  .fase-detail-item{border:1px solid transparent; transition:border-color .15s;}
+  .fase-detail-item:hover{border-color:var(--border);}
+  .prod-add-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%;
+    margin-top:4px;
+    padding:10px;
+    border:1.5px dashed var(--gold);
+    border-radius:8px;
+    background:rgba(201,162,39,.06);
+    color:var(--gold-light);
+    font-weight:700; font-size:.82rem; letter-spacing:.02em;
+    cursor:pointer;
+    transition:background .15s, border-style .15s;
+  }
+  .prod-add-btn svg{width:16px; height:16px;}
+  .prod-add-btn:hover{background:rgba(201,162,39,.16); border-style:solid;}
+  .prod-form{
+    background:var(--panel);
+    border:1px solid var(--gold);
+    border-left:4px solid var(--gold);
+    border-radius:8px;
+    padding:12px 14px;
+    box-shadow:0 4px 14px rgba(32,41,28,.08);
+    margin-top:4px;
+  }
+  .prod-form-title{font-size:.78rem; font-weight:800; color:var(--gold-light); letter-spacing:.04em; text-transform:uppercase; margin-bottom:10px;}
+  .prod-form-fields{display:flex; gap:10px; flex-wrap:wrap;}
+  .prod-form-field{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--text-dim); font-weight:600;}
+  .prod-form-owner-field{flex:0 0 220px;}
+  .prod-form-label-field{flex:1 1 260px;}
+  .prod-form select, .prod-form input[type=text]{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:8px 10px;
+    border-radius:7px;
+    font-size:.85rem;
+    font-family:inherit;
+    width:100%;
+  }
+  .prod-form select:focus, .prod-form input[type=text]:focus{outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,39,.2);}
+  .prod-form-error{font-size:.76rem; color:var(--danger-light); min-height:0; margin-top:6px;}
+  .prod-form-error:empty{display:none;}
+  .prod-form-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:12px;}
+  .prod-form-actions button{
+    padding:7px 14px; border-radius:7px; font-size:.8rem; font-weight:700; cursor:pointer;
+    border:1px solid var(--border);
+  }
+  .prod-form-cancel{background:var(--panel2); color:var(--text-dim);}
+  .prod-form-cancel:hover{background:var(--olive);}
+  .prod-form-save{background:var(--gold); border-color:var(--gold) !important; color:#1a1a1a;}
+  .prod-form-save:hover{filter:brightness(1.07);}
+  @media (max-width:760px){
+    .prod-actions{order:4; flex-basis:100%; justify-content:flex-end; padding-top:4px; border-top:1px dashed var(--border); margin-top:2px;}
+    .prod-btn{width:34px; height:34px;}
+    .prod-form-owner-field{flex:1 1 100%;}
+    .prod-toolbar-hint{flex-basis:100%;}
+  }
+
   /* ===== Células do EMCj ===== */
   .celulas-intro{color:var(--text-dim); font-size:.85rem; margin-bottom:16px;}
   .celula-code-badge{
@@ -927,7 +1039,13 @@
       </div>
       <div class="panel-card">
         <h2>Exame de Situação Operacional &mdash; por fase</h2>
-        <p class="celulas-intro">Progresso de todas as células do EMCj em cada fase do PPC. Clique numa fase para ver o que já foi enviado.</p>
+        <p class="celulas-intro">Progresso de todas as células do EMCj em cada fase do PPC. Clique numa fase para acompanhar os envios, abrir ou baixar os arquivos e gerenciar a lista de produtos da fase — que é refletida automaticamente na aba Células.</p>
+        <div class="prod-legend" aria-hidden="true">
+          <span class="prod-legend-chip"><span class="prod-btn prod-btn-edit" style="border-style:dashed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>Incluir produto</span>
+          <span class="prod-legend-chip"><span class="prod-btn prod-btn-edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>Editar nome e célula</span>
+          <span class="prod-legend-chip"><span class="prod-btn prod-btn-move"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></span>Reordenar</span>
+          <span class="prod-legend-chip"><span class="prod-btn prod-btn-remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>Retirar</span>
+        </div>
         <div id="dashboard-fases"></div>
       </div>
     </section>
@@ -974,7 +1092,7 @@
     <section id="tab-celulas" class="tab-panel">
       <div class="panel-card">
         <h2>Estado-Maior Conjunto &mdash; Células</h2>
-        <p class="celulas-intro">Contribuição de cada seção do EMCj em cada fase do PPC, com espaço para os chefes anexarem seus produtos. A Seção de Operações (D-3) reúne os documentos nomeados do Exame de Situação Operacional; as demais seções anexam seu produto de cada fase. O progresso alimenta automaticamente o painel da aba Controle da Operação.</p>
+        <p class="celulas-intro">Contribuição de cada seção do EMCj em cada fase do PPC, com espaço para os chefes anexarem seus produtos. A lista de produtos de cada fase é definida na aba Controle da Operação; aqui cada seção anexa os arquivos correspondentes, e o progresso alimenta automaticamente aquele painel.</p>
         <div class="accordion" id="celulas-accordion"></div>
       </div>
     </section>
@@ -1154,7 +1272,7 @@ const db = firebase.database();
 const currentOp = 'azuver';
 
 let activeRefs = [];
-let opState = { faltas:{data:'', pessoas:{}}, tema:null, constituicaoEM:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{}, celulas:{}, prazoFinal:'', fasePrazos:{} };
+let opState = { faltas:{data:'', pessoas:{}}, tema:null, constituicaoEM:null, kmzLink:'', driveLink:'', tps:{}, 'tps-prontos':{}, manuais:{}, exame:{}, celulas:{}, produtos:null, prazoFinal:'', fasePrazos:{} };
 
 function $(sel, root=document){ return root.querySelector(sel); }
 function $all(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
@@ -1252,11 +1370,16 @@ function attachListeners(){
   base.child('tps-prontos').on('value', tpsProntosCb);
   activeRefs.push({ref: base.child('tps-prontos'), cb: tpsProntosCb});
 
-  const exameCb = snap => { opState.exame = snap.val() || {}; renderExame(); };
+  seedProdutosIfEmpty(base);
+  const produtosCb = snap => { opState.produtos = snap.val(); initCelulasAccordion(); renderDashboard(); };
+  base.child('produtos').on('value', produtosCb);
+  activeRefs.push({ref: base.child('produtos'), cb: produtosCb});
+
+  const exameCb = snap => { opState.exame = snap.val() || {}; renderProdutoFiles(); };
   base.child('exame').on('value', exameCb);
   activeRefs.push({ref: base.child('exame'), cb: exameCb});
 
-  const celulasCb = snap => { opState.celulas = snap.val() || {}; renderCelulas(); };
+  const celulasCb = snap => { opState.celulas = snap.val() || {}; renderProdutoFiles(); };
   base.child('celulas').on('value', celulasCb);
   activeRefs.push({ref: base.child('celulas'), cb: celulasCb});
 
@@ -1505,6 +1628,9 @@ function renderPdfList(kind){
 }
 
 /* ============ Exame de Situação Operacional ============ */
+/* The `docs` below are only the initial seed of each fase's product list. The live list is stored
+   in Firebase (operations/{op}/produtos/{faseId}/{key} = {label, owner, order, filesPath?}) and is
+   edited from the Controle da Operação tab; the Células tab only renders it. */
 const EXAME_FASES = [
   { id:'fase1', label:'Fase 1 — Avaliação do Ambiente Operacional e Análise da Missão', docs:[
     {key:'diagrama-relacoes-atual',            label:'Diagrama de Relações da Situação Atual', owner:'d5'},
@@ -1544,7 +1670,22 @@ const EXAME_FASES = [
   ]},
 ];
 
-function docOwner(doc){ return doc.owner || 'd3'; }
+// Seed for the per-célula products that used to be an untitled "produto desta fase" zone.
+// Their files keep living at their original path (celulas/{id}/fases/{fase}/docs).
+const SEED_CELULA_PRODUTOS = [
+  {celula:'d1',  fase:'fase6', label:'Anexo de Pessoal'},
+  {celula:'d2',  fase:'fase6', label:'Anexo de Inteligência'},
+  {celula:'d4',  fase:'fase3', label:'Praticabilidade Logística das Linhas de Ação'},
+  {celula:'d4',  fase:'fase6', label:'Anexo de Logística e Mobilização (inclui a LNC)'},
+  {celula:'d5',  fase:'fase6', label:'Gerenciamento do Risco Operacional (GRO)'},
+  {celula:'d6',  fase:'fase6', label:'Anexo de C²'},
+  {celula:'d7',  fase:'fase3', label:'Parecer de Comunicação Social sobre as Linhas de Ação'},
+  {celula:'d7',  fase:'fase6', label:'Anexo de Comunicação Social'},
+  {celula:'d8',  fase:'fase6', label:'Anexo de Operações de Informação'},
+  {celula:'d9',  fase:'fase3', label:'Implicações de Assuntos Civis nas Linhas de Ação'},
+  {celula:'d9',  fase:'fase6', label:'Anexo de Assuntos Civis'},
+  {celula:'d10', fase:'fase6', label:'Anexo de Administração Financeira'},
+];
 
 const CELULAS = [
   { id:'d1', codigo:'D-1', nome:'Pessoal',
@@ -1557,8 +1698,7 @@ const CELULAS = [
     fases:{
       fase3:'Levanta as Possibilidades do Inimigo (Psb Ini), identificando vulnerabilidades e ameaças prováveis para a operação.',
       fase6:'Confecciona o Anexo de Inteligência e seus apêndices ao Plano Operacional.',
-    },
-    produtos:{ fase3:null }},
+    }},
   { id:'d3', codigo:'D-3', nome:'Operações',
     resumo:'Conduz o Processo de Planejamento Conjunto (PPC) e é responsável pela consolidação e formalização do documento Exame de Situação Operacional, reunindo os produtos de todas as seções.',
     fases:{}},
@@ -1575,12 +1715,6 @@ const CELULAS = [
       fase2:'Desenvolve a Abordagem Operacional (Desenho Operacional) com base nos Centros de Gravidade e no Estado Final Desejado Operacional.',
       fase3:'Consolida, em coordenação com as Seções de Operações e de Inteligência, a Lista Integrada de Alvos (LIA) e a Lista Integrada e Priorizada de Alvos (LIPA).',
       fase6:'Realiza o Gerenciamento do Risco Operacional (GRO), consolidando o respectivo anexo.',
-    },
-    produtos:{
-      fase1:null,
-      fase2:null,
-      fase3:null,
-      fase6:'Gerenciamento do Risco Operacional (GRO)',
     }},
   { id:'d6', codigo:'D-6', nome:'Comando e Controle',
     resumo:'Análise de Comando e Controle e coordenação da integração das redes que interligam os sistemas de C² do Comando Operacional e das Forças Componentes; instalação, operação, manutenção e reversão dos sistemas de C²; gerenciamento do banco de dados do Comando Operacional; planejamento das atividades de Guerra Eletrônica; e estabelecimento de medidas de proteção cibernética dos sistemas de C². Não possui roteiro próprio de análise por fase no Exame de Situação; sua contribuição formal concentra-se no anexo final.',
@@ -1709,54 +1843,83 @@ function setupDocUploadZone(idSlug, refPath){
   });
 }
 
-function genericZoneTitle(celula, faseId){
-  return celula.produtos && (faseId in celula.produtos) ? celula.produtos[faseId] : undefined;
+/* ============ Product list (editable in Controle da Operação, read-only in Células) ============ */
+function buildSeedProdutos(){
+  const seed = { _seeded: true };
+  EXAME_FASES.forEach(fase => {
+    seed[fase.id] = {};
+    let order = 0;
+    fase.docs.forEach(doc => {
+      seed[fase.id][doc.key] = { label: doc.label, owner: doc.owner || 'd3', order: order++ };
+    });
+    SEED_CELULA_PRODUTOS.filter(p => p.fase === fase.id).forEach(p => {
+      seed[fase.id]['celula-' + p.celula] = {
+        label: p.label, owner: p.celula, order: order++,
+        filesPath: 'celulas/' + p.celula + '/fases/' + fase.id + '/docs'
+      };
+    });
+  });
+  return seed;
 }
-function celulaHasGenericZone(celula, faseId){
-  if (celula.id === 'd3' || !celula.fases[faseId]) return false;
-  return genericZoneTitle(celula, faseId) !== null;
+const SEED_PRODUTOS = buildSeedProdutos();
+
+// Writes the seed once; `_seeded` keeps the node alive even if every product is later removed.
+function seedProdutosIfEmpty(base){
+  base.child('produtos').transaction(cur => cur === null ? SEED_PRODUTOS : undefined);
 }
 
+function produtosState(){ return opState.produtos || SEED_PRODUTOS; }
+function faseProdutos(faseId){
+  return Object.entries(produtosState()[faseId] || {})
+    .map(([key, p]) => ({ key, ...p }))
+    .sort((a,b) => (a.order||0) - (b.order||0) || a.key.localeCompare(b.key));
+}
+function produtoFilesPath(faseId, prod){ return prod.filesPath || ('exame/' + faseId + '/docs/' + prod.key); }
+function filesAtPath(path){
+  return path.split('/').reduce((node, seg) => (node && node[seg]) || null, opState) || {};
+}
+function prodSlug(faseId, key){ return 'prod-' + faseId + '-' + key; }
+function celulaById(id){ return CELULAS.find(c => c.id === id); }
+
+let celulasSignature = null;
 function initCelulasAccordion(){
+  // Rebuild only when the product list itself changed, keeping open sections open.
+  const signature = JSON.stringify(produtosState());
+  if (signature === celulasSignature) return;
+  celulasSignature = signature;
+
   const container = $('#celulas-accordion');
+  const openIds = new Set($all('.accordion-item.open', container).map(el => el.dataset.celula));
   container.innerHTML = '';
   CELULAS.forEach(celula => {
     const item = document.createElement('div');
-    item.className = 'accordion-item';
+    item.className = 'accordion-item' + (openIds.has(celula.id) ? ' open' : '');
     item.dataset.celula = celula.id;
 
-    const applicableFases = EXAME_FASES.filter(fase => celula.fases[fase.id] || fase.docs.some(doc => docOwner(doc) === celula.id));
+    const applicable = EXAME_FASES
+      .map(fase => ({ fase, owned: faseProdutos(fase.id).filter(p => p.owner === celula.id) }))
+      .filter(({fase, owned}) => celula.fases[fase.id] || owned.length > 0);
 
-    const faseBlocksHtml = applicableFases.length === 0
+    const faseBlocksHtml = applicable.length === 0
       ? '<p class="empty-hint">Esta seção não possui produtos vinculados às fases do Exame de Situação.</p>'
-      : applicableFases.map(fase => {
+      : applicable.map(({fase, owned}) => {
       const texto = celula.fases[fase.id];
       const textoHtml = texto ? `<p class="fase-block-text">${escapeHtml(texto)}</p>` : '';
 
-      const ownedDocsHtml = fase.docs.filter(doc => docOwner(doc) === celula.id).map(doc => `
+      const ownedHtml = owned.map(prod => {
+        const slug = prodSlug(fase.id, prod.key);
+        return `
             <div class="fase-doc-item">
-              <h5>${escapeHtml(doc.label)}</h5>
-              <div class="pdf-list" id="exame-${fase.id}-${doc.key}-list"></div>
-              <div class="pdf-upload-zone" id="exame-${fase.id}-${doc.key}-zone" title="Adicionar arquivo">
+              <h5>${escapeHtml(prod.label)}</h5>
+              <div class="pdf-list" id="${slug}-list"></div>
+              <div class="pdf-upload-zone" id="${slug}-zone" title="Adicionar arquivo">
                 <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 <span class="upload-zone-text">Anexar documento</span>
-                <input type="file" id="exame-${fase.id}-${doc.key}-input" accept="${DOC_ACCEPT}" multiple style="display:none">
+                <input type="file" id="${slug}-input" accept="${DOC_ACCEPT}" multiple style="display:none">
               </div>
             </div>
-          `).join('');
-
-      const genericTitle = genericZoneTitle(celula, fase.id);
-      const genericHtml = celulaHasGenericZone(celula, fase.id) ? `
-            <div class="fase-doc-item">
-              ${genericTitle ? `<h5>${escapeHtml(genericTitle)}</h5>` : ''}
-              <div class="pdf-list" id="celula-${celula.id}-${fase.id}-list"></div>
-              <div class="pdf-upload-zone" id="celula-${celula.id}-${fase.id}-zone" title="Adicionar produto desta fase">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                <span class="upload-zone-text">Anexar produto desta fase</span>
-                <input type="file" id="celula-${celula.id}-${fase.id}-input" accept="${DOC_ACCEPT}" multiple style="display:none">
-              </div>
-            </div>
-          ` : '';
+          `;
+      }).join('');
 
       return `
         <div class="fase-block" data-fase="${fase.id}">
@@ -1766,8 +1929,7 @@ function initCelulasAccordion(){
             <input type="date" class="fase-prazo-input" id="fase-prazo-${celula.id}-${fase.id}" data-fase="${fase.id}">
           </div>
           ${textoHtml}
-          ${ownedDocsHtml}
-          ${genericHtml}
+          ${ownedHtml}
         </div>
       `;
     }).join('');
@@ -1788,43 +1950,30 @@ function initCelulasAccordion(){
       item.classList.toggle('open');
     });
 
-    applicableFases.forEach(fase => {
-      fase.docs.filter(doc => docOwner(doc) === celula.id).forEach(doc => {
-        setupDocUploadZone('exame-' + fase.id + '-' + doc.key, 'exame/' + fase.id + '/docs/' + doc.key);
-      });
-      if (celulaHasGenericZone(celula, fase.id)){
-        setupDocUploadZone('celula-' + celula.id + '-' + fase.id, 'celulas/' + celula.id + '/fases/' + fase.id + '/docs');
-      }
+    applicable.forEach(({fase, owned}) => {
+      owned.forEach(prod => setupDocUploadZone(prodSlug(fase.id, prod.key), produtoFilesPath(fase.id, prod)));
       wireFasePrazoInput($('#fase-prazo-' + celula.id + '-' + fase.id));
     });
   });
+  renderProdutoLists();
+  syncFasePrazoInputs();
 }
 initCelulasAccordion();
 
-function renderCelulas(){
-  CELULAS.forEach(celula => {
-    if (celula.id === 'd3') return;
-    EXAME_FASES.forEach(fase => {
-      const listEl = $('#celula-' + celula.id + '-' + fase.id + '-list');
-      if (!listEl) return;
-      const files = (((opState.celulas[celula.id] || {}).fases || {})[fase.id] || {}).docs || {};
-      renderDocList(listEl, files, 'celulas/' + celula.id + '/fases/' + fase.id + '/docs', $('#celula-' + celula.id + '-' + fase.id + '-zone'));
-    });
-  });
+function renderProdutoFiles(){
+  renderProdutoLists();
   renderDashboard();
 }
-
-function renderExame(){
+function renderProdutoLists(){
   EXAME_FASES.forEach(fase => {
-    fase.docs.forEach(doc => {
-      const listEl = $('#exame-' + fase.id + '-' + doc.key + '-list');
+    faseProdutos(fase.id).forEach(prod => {
+      const slug = prodSlug(fase.id, prod.key);
+      const listEl = $('#' + slug + '-list');
       if (!listEl) return;
-      const faseState = opState.exame[fase.id] || {};
-      const files = (faseState.docs || {})[doc.key] || {};
-      renderDocList(listEl, files, 'exame/' + fase.id + '/docs/' + doc.key, $('#exame-' + fase.id + '-' + doc.key + '-zone'));
+      const path = produtoFilesPath(fase.id, prod);
+      renderDocList(listEl, filesAtPath(path), path, $('#' + slug + '-zone'));
     });
   });
-  renderDashboard();
 }
 
 /* ============ Dashboard (Início) ============ */
@@ -1835,18 +1984,10 @@ function sortedFiles(files){
 function countExameProgress(){
   let total = 0, done = 0;
   const perFase = EXAME_FASES.map(fase => {
-    const items = [];
-    CELULAS.forEach(celula => {
-      fase.docs.filter(doc => docOwner(doc) === celula.id).forEach(doc => {
-        const files = ((opState.exame[fase.id] || {}).docs || {})[doc.key] || {};
-        const fileList = sortedFiles(files);
-        items.push({ celula: celula.codigo, label: doc.label, done: fileList.length > 0, files: fileList });
-      });
-      if (celulaHasGenericZone(celula, fase.id)){
-        const files = (((opState.celulas[celula.id] || {}).fases || {})[fase.id] || {}).docs || {};
-        const fileList = sortedFiles(files);
-        items.push({ celula: celula.codigo, label: celula.fases[fase.id], done: fileList.length > 0, files: fileList });
-      }
+    const items = faseProdutos(fase.id).map(prod => {
+      const celula = celulaById(prod.owner);
+      const fileList = sortedFiles(filesAtPath(produtoFilesPath(fase.id, prod)));
+      return { key: prod.key, owner: prod.owner, celula: celula ? celula.codigo : '—', label: prod.label, done: fileList.length > 0, files: fileList };
     });
     const faseDone = items.filter(i => i.done).length;
     const faseTotal = items.length;
@@ -1884,6 +2025,15 @@ function renderDashboardTiles(){
 
 let expandedFases = new Set();
 let dashboardFiles = [];
+// Open inline form in the dashboard: { fase, key } (key null = new product). While it's open,
+// that fase's detail isn't rebuilt so unrelated syncs don't wipe what's being typed.
+let produtoForm = null;
+
+const ICON_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>';
+const ICON_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+const ICON_EDIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+const ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+const ICON_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 
 function dashboardFileHtml(file){
   const idx = dashboardFiles.push(file) - 1;
@@ -1901,37 +2051,171 @@ function dashboardFileHtml(file){
         </div>`;
 }
 
-function renderDashboardFases(){
-  const { perFase } = countExameProgress();
-  const container = $('#dashboard-fases');
-  dashboardFiles = [];
+function produtoFormHtml(faseId, prod){
+  const owner = prod ? prod.owner : '';
+  const options = CELULAS.map(c => `<option value="${c.id}"${c.id === owner ? ' selected' : ''}>${c.codigo} — ${escapeHtml(c.nome)}</option>`).join('');
+  return `
+      <div class="prod-form" data-fase="${faseId}">
+        <div class="prod-form-title">${prod ? 'Editar produto' : 'Novo produto nesta fase'}</div>
+        <div class="prod-form-fields">
+          <label class="prod-form-field prod-form-owner-field">
+            <span>Célula responsável</span>
+            <select class="prod-form-owner">${prod ? '' : '<option value="" selected disabled>Selecione…</option>'}${options}</select>
+          </label>
+          <label class="prod-form-field prod-form-label-field">
+            <span>Nome do produto</span>
+            <input type="text" class="prod-form-label" maxlength="160" placeholder="Ex.: Anexo de Pessoal" value="${prod ? escapeHtml(prod.label) : ''}">
+          </label>
+        </div>
+        <div class="prod-form-error"></div>
+        <div class="prod-form-actions">
+          <button type="button" class="prod-form-cancel" data-prod-cancel>Cancelar</button>
+          <button type="button" class="prod-form-save" data-prod-save>${prod ? 'Salvar alterações' : 'Incluir produto'}</button>
+        </div>
+      </div>`;
+}
 
-  if (!container.dataset.filesWired){
-    container.dataset.filesWired = '1';
-    container.addEventListener('click', e => {
-      const openBtn = e.target.closest('[data-dash-open]');
-      const dlBtn = e.target.closest('[data-dash-download]');
-      if (openBtn) openDocFile(dashboardFiles[openBtn.dataset.dashOpen]);
-      if (dlBtn){
-        const file = dashboardFiles[dlBtn.dataset.dashDownload];
-        downloadDataUrl(file.fileData, file.fileName);
-      }
-    });
-  }
-
-  perFase.forEach(f => {
-    const pct = f.total > 0 ? Math.round((f.done / f.total) * 100) : 0;
-    const complete = f.total > 0 && f.done === f.total;
-    const detailHtml = f.items.map(i => `
-      <div class="fase-detail-item ${i.done ? 'done' : 'pending'}">
+function faseDetailHtml(f){
+  const editingKey = produtoForm && produtoForm.fase === f.id ? produtoForm.key : undefined;
+  const itemsHtml = f.items.map((i, idx) => {
+    if (editingKey === i.key) return produtoFormHtml(f.id, i);
+    return `
+      <div class="fase-detail-item ${i.done ? 'done' : 'pending'}" data-key="${escapeHtml(i.key)}">
         <span class="fase-detail-celula">${escapeHtml(i.celula)}</span>
         <div class="fase-detail-body">
           <span class="fase-detail-label">${escapeHtml(i.label)}</span>
           ${i.files.length ? `<div class="fase-detail-files">${i.files.map(dashboardFileHtml).join('')}</div>` : ''}
         </div>
         <span class="fase-detail-status">${i.done ? 'Enviado' : 'Pendente'}</span>
+        <span class="prod-actions">
+          <button type="button" class="prod-btn prod-btn-move" data-prod-up="${escapeHtml(i.key)}" title="Mover para cima" aria-label="Mover para cima"${idx === 0 ? ' disabled' : ''}>${ICON_UP}</button>
+          <button type="button" class="prod-btn prod-btn-move" data-prod-down="${escapeHtml(i.key)}" title="Mover para baixo" aria-label="Mover para baixo"${idx === f.items.length - 1 ? ' disabled' : ''}>${ICON_DOWN}</button>
+          <button type="button" class="prod-btn prod-btn-edit" data-prod-edit="${escapeHtml(i.key)}" title="Editar produto" aria-label="Editar produto">${ICON_EDIT}</button>
+          <button type="button" class="prod-btn prod-btn-remove" data-prod-remove="${escapeHtml(i.key)}" title="Retirar produto" aria-label="Retirar produto">${ICON_TRASH}</button>
+        </span>
+      </div>`;
+  }).join('');
+  const emptyHtml = f.items.length === 0 && editingKey !== null
+    ? '<div class="empty-hint">Nenhum produto nesta fase. Use “Incluir produto” para cadastrar o primeiro.</div>' : '';
+  const addHtml = editingKey === null
+    ? produtoFormHtml(f.id, null)
+    : `<button type="button" class="prod-add-btn" data-prod-add="${f.id}">${ICON_PLUS}Incluir produto</button>`;
+  return `
+      <div class="prod-toolbar">
+        <span class="prod-toolbar-title">Produtos da fase</span>
+        <span class="prod-toolbar-hint">Alterações refletem automaticamente na aba Células</span>
       </div>
-    `).join('');
+      ${itemsHtml}${emptyHtml}${addHtml}`;
+}
+
+function openProdutoForm(faseId, key){
+  produtoForm = { fase: faseId, key };
+  const row = $(`#dashboard-fases .progress-row[data-fase="${faseId}"]`);
+  if (row) row.querySelector('.fase-detail').innerHTML = '';
+  renderDashboardFases();
+  const input = row && row.querySelector('.prod-form-label');
+  if (input){
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+    row.querySelector('.prod-form').scrollIntoView({ block:'nearest', behavior:'smooth' });
+  }
+}
+function closeProdutoForm(){
+  produtoForm = null;
+  renderDashboardFases();
+}
+
+function saveProdutoForm(formEl){
+  const faseId = formEl.dataset.fase;
+  const label = formEl.querySelector('.prod-form-label').value.trim();
+  const owner = formEl.querySelector('.prod-form-owner').value;
+  const errorEl = formEl.querySelector('.prod-form-error');
+  if (!owner || !label){
+    errorEl.textContent = !owner ? 'Selecione a célula responsável.' : 'Informe o nome do produto.';
+    return;
+  }
+  const key = produtoForm && produtoForm.key;
+  if (key){
+    if (!(produtosState()[faseId] || {})[key]){ closeProdutoForm(); return; }
+    opRef('produtos/' + faseId + '/' + key).update({ label, owner });
+  } else {
+    const order = faseProdutos(faseId).reduce((max, p) => Math.max(max, p.order || 0), -1) + 1;
+    opRef('produtos/' + faseId + '/' + uid()).set({ label, owner, order });
+  }
+  closeProdutoForm();
+}
+
+function moveProduto(faseId, key, delta){
+  const list = faseProdutos(faseId);
+  const idx = list.findIndex(p => p.key === key);
+  const target = idx + delta;
+  if (idx < 0 || target < 0 || target >= list.length) return;
+  [list[idx], list[target]] = [list[target], list[idx]];
+  const updates = {};
+  list.forEach((p, i) => { updates[p.key + '/order'] = i; });
+  opRef('produtos/' + faseId).update(updates);
+}
+
+function removeProduto(faseId, key){
+  const prod = faseProdutos(faseId).find(p => p.key === key);
+  if (!prod) return;
+  const path = produtoFilesPath(faseId, prod);
+  const nFiles = Object.keys(filesAtPath(path)).length;
+  const celula = celulaById(prod.owner);
+  const aviso = nFiles > 0
+    ? `\n\n${nFiles === 1 ? 'O arquivo anexado a ele também será apagado' : `Os ${nFiles} arquivos anexados a ele também serão apagados`} para todos os usuários.`
+    : '';
+  if (!confirm(`Retirar o produto "${prod.label}"${celula ? ' (' + celula.codigo + ')' : ''} desta fase?${aviso}`)) return;
+  const updates = {};
+  updates['produtos/' + faseId + '/' + key] = null;
+  updates[path] = null;
+  db.ref('operations/' + currentOp).update(updates);
+}
+
+function wireDashboardFases(container){
+  container.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn || !container.contains(btn)) return;
+    const faseId = (btn.closest('.progress-row') || {}).dataset?.fase;
+    const d = btn.dataset;
+    if (d.dashOpen !== undefined) openDocFile(dashboardFiles[d.dashOpen]);
+    else if (d.dashDownload !== undefined){
+      const file = dashboardFiles[d.dashDownload];
+      downloadDataUrl(file.fileData, file.fileName);
+    }
+    else if (d.prodAdd !== undefined) openProdutoForm(faseId, null);
+    else if (d.prodEdit !== undefined) openProdutoForm(faseId, d.prodEdit);
+    else if (d.prodUp !== undefined) moveProduto(faseId, d.prodUp, -1);
+    else if (d.prodDown !== undefined) moveProduto(faseId, d.prodDown, 1);
+    else if (d.prodRemove !== undefined) removeProduto(faseId, d.prodRemove);
+    else if (d.prodCancel !== undefined) closeProdutoForm();
+    else if (d.prodSave !== undefined) saveProdutoForm(btn.closest('.prod-form'));
+  });
+  container.addEventListener('keydown', e => {
+    const formEl = e.target.closest('.prod-form');
+    if (!formEl) return;
+    if (e.key === 'Enter' && e.target.matches('.prod-form-label')){ e.preventDefault(); saveProdutoForm(formEl); }
+    if (e.key === 'Escape'){ e.preventDefault(); closeProdutoForm(); }
+  });
+  container.addEventListener('input', e => {
+    const formEl = e.target.closest('.prod-form');
+    if (formEl) formEl.querySelector('.prod-form-error').textContent = '';
+  });
+}
+
+function renderDashboardFases(){
+  const { perFase } = countExameProgress();
+  const container = $('#dashboard-fases');
+  dashboardFiles = [];
+
+  if (!container.dataset.wired){
+    container.dataset.wired = '1';
+    wireDashboardFases(container);
+  }
+
+  perFase.forEach(f => {
+    const pct = f.total > 0 ? Math.round((f.done / f.total) * 100) : 0;
+    const complete = f.total > 0 && f.done === f.total;
 
     let row = container.querySelector(`.progress-row[data-fase="${f.id}"]`);
     if (!row){
@@ -1964,7 +2248,9 @@ function renderDashboardFases(){
     const fill = row.querySelector('.progress-fill');
     fill.style.width = pct + '%';
     fill.classList.toggle('complete', complete);
-    row.querySelector('.fase-detail').innerHTML = detailHtml;
+    const detail = row.querySelector('.fase-detail');
+    const formOpenHere = produtoForm && produtoForm.fase === f.id && detail.querySelector('.prod-form');
+    if (!formOpenHere) detail.innerHTML = faseDetailHtml(f);
   });
 }
 
